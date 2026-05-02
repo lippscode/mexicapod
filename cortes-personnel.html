@@ -1225,11 +1225,11 @@ function renderBadges(p) {
 
 function renderPerson(p) {
   const eventsHtml = p.events.length === 0 ? '' :
-    `<div class="entry-body"><ul class="event-list">${
-      p.events.map(e =>
-        `<li class="event-item">${e.text}${e.src ? `<span class="src">(${e.src})</span>` : ''}</li>`
-      ).join('')
-    }</ul></div>`;
+    '<div class="entry-body"><ul class="event-list">' +
+      p.events.map(function(e) {
+        return '<li class="event-item">' + e.text + (e.src ? '<span class="src">(' + e.src + ')</span>' : '') + '</li>';
+      }).join('') +
+    '</ul></div>';
 
   return `<details>
     <summary>
@@ -1252,15 +1252,13 @@ function renderMisc(query) {
       )
     : MISC.entries;
   if (!filtered.length) return '';
-  return `<div class="section-group" id="group-MISC">
-    <div class="section-heading">${MISC.label}</div>
-    ${filtered.map(e => `
-      <div class="misc-entry">
-        <div class="misc-entry-name">${e.name}${e.src ? ` <span class="badge badge-source">${e.src}</span>` : ''}</div>
-        ${e.note ? `<p style="font-size:13.5px;color:var(--text-muted);line-height:1.55;margin-top:3px">${e.note}</p>` : ''}
-      </div>
-    `).join('')}
-  </div>`;
+  var miscItems = filtered.map(function(e) {
+    return '<div class="misc-entry">' +
+      '<div class="misc-entry-name">' + e.name + (e.src ? ' <span class="badge badge-source">' + e.src + '</span>' : '') + '</div>' +
+      (e.note ? '<p style="font-size:13.5px;color:var(--text-muted);line-height:1.55;margin-top:3px">' + e.note + '</p>' : '') +
+      '</div>';
+  }).join('');
+  return '<div class="section-group" id="group-MISC"><div class="section-heading">' + MISC.label + '</div>' + miscItems + '</div>';
 }
 
 function filterAll() {
