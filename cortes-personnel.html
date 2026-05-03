@@ -5,1309 +5,340 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Cortés Personnel</title>
 <style>
-  :root {
-    --bg: #faf8f4;
-    --surface: #ffffff;
-    --border: #e2ddd4;
-    --border-hover: #c8bfb0;
-    --text: #1a1714;
-    --text-muted: #6b6358;
-    --text-faint: #9e9488;
-    --accent: #8b2500;
-    --accent-bg: #fdf0eb;
-    --badge-source: #f0ede8;
-    --badge-source-text: #5a5048;
-    --badge-role: #e8f0f5;
-    --badge-role-text: #1e4d6b;
-    --badge-narvaez: #f5ede8;
-    --badge-narvaez-text: #6b2e00;
-    --badge-diego: #f5eef0;
-    --badge-diego-text: #6b1a30;
-    --font-display: 'Palatino Linotype', Palatino, 'Book Antiqua', Georgia, serif;
-    --font-body: Georgia, 'Times New Roman', serif;
-    --font-ui: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
-  }
-
-  * { box-sizing: border-box; margin: 0; padding: 0; }
-
-  body {
-    background: var(--bg);
-    color: var(--text);
-    font-family: var(--font-body);
-    font-size: 15px;
-    line-height: 1.6;
-    padding: 2rem 1rem;
-    max-width: 860px;
-    margin: 0 auto;
-  }
-
-  /* ── Header ── */
-  .page-header {
-    border-bottom: 2px solid var(--accent);
-    padding-bottom: 1.25rem;
-    margin-bottom: 1.75rem;
-  }
-  .page-header h1 {
-    font-family: var(--font-display);
-    font-size: 1.9rem;
-    font-weight: normal;
-    color: var(--accent);
-    letter-spacing: 0.01em;
-    margin-bottom: 0.5rem;
-  }
-  .page-header p {
-    font-family: var(--font-ui);
-    font-size: 13px;
-    color: var(--text-muted);
-    line-height: 1.5;
-  }
-
-  /* ── Intro note ── */
-  .intro-note {
-    background: var(--surface);
-    border: 1px solid var(--border);
-    border-left: 3px solid var(--accent);
-    padding: 0.85rem 1rem;
-    margin-bottom: 1.5rem;
-    font-size: 13.5px;
-    color: var(--text-muted);
-    line-height: 1.55;
-  }
-
-  /* ── Controls ── */
-  .controls {
-    position: sticky;
-    top: 0;
-    background: var(--bg);
-    padding: 0.75rem 0;
-    z-index: 10;
-    border-bottom: 1px solid var(--border);
-    margin-bottom: 1.25rem;
-  }
-  .search-row {
-    display: flex;
-    gap: 8px;
-    align-items: center;
-    margin-bottom: 0.6rem;
-  }
-  #search {
-    flex: 1;
-    padding: 7px 12px;
-    border: 1px solid var(--border);
-    border-radius: 4px;
-    background: var(--surface);
-    font-family: var(--font-ui);
-    font-size: 14px;
-    color: var(--text);
-    outline: none;
-  }
-  #search:focus { border-color: var(--accent); }
-  #search::placeholder { color: var(--text-faint); }
-
-  .result-count {
-    font-family: var(--font-ui);
-    font-size: 12px;
-    color: var(--text-faint);
-    white-space: nowrap;
-    min-width: 80px;
-    text-align: right;
-  }
-
-  .alpha-nav {
-    display: flex;
-    flex-wrap: wrap;
-    gap: 3px;
-  }
-  .alpha-nav button {
-    font-family: var(--font-ui);
-    font-size: 11px;
-    font-weight: 500;
-    padding: 3px 7px;
-    border: 1px solid var(--border);
-    border-radius: 3px;
-    background: var(--surface);
-    color: var(--text-muted);
-    cursor: pointer;
-    transition: all 0.1s;
-  }
-  .alpha-nav button:hover { border-color: var(--accent); color: var(--accent); }
-  .alpha-nav button.active { background: var(--accent); color: #fff; border-color: var(--accent); }
-
-  /* ── Section headers (Misc, A, B, …) ── */
-  .section-group { margin-bottom: 1.75rem; }
-  .section-heading {
-    font-family: var(--font-display);
-    font-size: 1.15rem;
-    font-weight: normal;
-    color: var(--accent);
-    border-bottom: 1px solid var(--border);
-    padding-bottom: 4px;
-    margin-bottom: 0.75rem;
-    scroll-margin-top: 90px;
-  }
-
-  /* ── Person entry ── */
-  details {
-    background: var(--surface);
-    border: 1px solid var(--border);
-    border-radius: 4px;
-    margin-bottom: 5px;
-    transition: border-color 0.15s;
-  }
-  details:hover { border-color: var(--border-hover); }
-  details[open] { border-color: var(--border-hover); }
-
-  summary {
-    list-style: none;
-    padding: 9px 12px;
-    cursor: pointer;
-    display: flex;
-    align-items: flex-start;
-    gap: 8px;
-    user-select: none;
-  }
-  summary::-webkit-details-marker { display: none; }
-
-  .toggle-arrow {
-    font-size: 9px;
-    color: var(--text-faint);
-    margin-top: 4px;
-    flex-shrink: 0;
-    transition: transform 0.15s;
-    font-style: normal;
-  }
-  details[open] .toggle-arrow { transform: rotate(90deg); }
-
-  .summary-main { flex: 1; display: flex; flex-wrap: wrap; align-items: baseline; gap: 6px; }
-
-  .person-name {
-    font-family: var(--font-display);
-    font-size: 15px;
-    color: var(--text);
-  }
-
-  .badge {
-    font-family: var(--font-ui);
-    font-size: 10.5px;
-    padding: 1px 6px;
-    border-radius: 3px;
-    white-space: nowrap;
-    line-height: 1.6;
-  }
-  .badge-source { background: var(--badge-source); color: var(--badge-source-text); }
-  .badge-role { background: var(--badge-role); color: var(--badge-role-text); }
-  .badge-narvaez { background: var(--badge-narvaez); color: var(--badge-narvaez-text); }
-  .badge-diego { background: var(--badge-diego); color: var(--badge-diego-text); }
-
-  .entry-body {
-    padding: 0 12px 10px 28px;
-  }
-  .event-list { list-style: none; }
-  .event-item {
-    font-size: 13.5px;
-    color: var(--text-muted);
-    line-height: 1.55;
-    padding: 3px 0 3px 10px;
-    border-left: 2px solid var(--border);
-    margin-bottom: 3px;
-  }
-  .event-item .src {
-    font-size: 11.5px;
-    color: var(--text-faint);
-    margin-left: 4px;
-  }
-
-  /* single-line entries (no bullets) */
-  .inline-note {
-    font-size: 13.5px;
-    color: var(--text-muted);
-    line-height: 1.55;
-    padding-top: 2px;
-  }
-
-  /* ── Misc groups ── */
-  .misc-entry {
-    background: var(--surface);
-    border: 1px solid var(--border);
-    border-radius: 4px;
-    margin-bottom: 5px;
-    padding: 8px 12px;
-  }
-  .misc-entry-name {
-    font-family: var(--font-display);
-    font-size: 14.5px;
-    color: var(--text);
-    margin-bottom: 2px;
-  }
-  .misc-entry ul { list-style: none; }
-  .misc-entry .event-item { font-size: 13px; }
-
-  /* ── No results ── */
-  .no-results {
-    font-family: var(--font-ui);
-    font-size: 14px;
-    color: var(--text-faint);
-    padding: 2rem;
-    text-align: center;
-  }
-
-  /* ── Footer ── */
-  .page-footer {
-    margin-top: 2.5rem;
-    padding-top: 1rem;
-    border-top: 1px solid var(--border);
-    font-family: var(--font-ui);
-    font-size: 12px;
-    color: var(--text-faint);
-  }
+body { font-family: Georgia, serif; max-width: 860px; margin: 0 auto; padding: 1.5rem 1rem; background: #faf8f4; color: #1a1714; }
+h1 { font-size: 1.9rem; font-weight: normal; color: #8b2500; border-bottom: 2px solid #8b2500; padding-bottom: 0.75rem; margin-bottom: 1rem; }
+.intro { background: #fff; border-left: 3px solid #8b2500; border: 1px solid #e2ddd4; border-left: 3px solid #8b2500; padding: 0.75rem 1rem; margin-bottom: 1.25rem; font-size: 13.5px; color: #555; }
+.controls { position: sticky; top: 0; background: #faf8f4; padding: 0.6rem 0; border-bottom: 1px solid #e2ddd4; margin-bottom: 1rem; z-index: 10; }
+#search { width: 100%; padding: 7px 12px; border: 1px solid #ccc; border-radius: 4px; font-size: 14px; font-family: sans-serif; }
+.alpha { display: flex; flex-wrap: wrap; gap: 3px; margin-top: 6px; }
+.alpha button { font-size: 11px; padding: 2px 7px; border: 1px solid #ccc; border-radius: 3px; background: #fff; cursor: pointer; font-family: sans-serif; }
+.alpha button:hover { background: #8b2500; color: #fff; border-color: #8b2500; }
+.letter-head { font-size: 1.1rem; color: #8b2500; border-bottom: 1px solid #e2ddd4; padding-bottom: 3px; margin: 1.25rem 0 0.6rem; font-weight: normal; scroll-margin-top: 80px; }
+details { background: #fff; border: 1px solid #e2ddd4; border-radius: 4px; margin-bottom: 4px; }
+summary { padding: 8px 12px; cursor: pointer; list-style: none; font-family: Georgia, serif; font-size: 14.5px; display: flex; align-items: center; gap: 8px; }
+summary::-webkit-details-marker { display: none; }
+.arr { font-size: 9px; color: #aaa; flex-shrink: 0; }
+details[open] .arr { transform: rotate(90deg); display: inline-block; }
+.badges { display: flex; flex-wrap: wrap; gap: 3px; margin-left: 4px; }
+.badge { font-size: 10.5px; padding: 1px 6px; border-radius: 3px; font-family: sans-serif; }
+.bs { background: #f0ede8; color: #5a5048; }
+.br { background: #e8f0f5; color: #1e4d6b; }
+.bd { background: #f5eef0; color: #6b1a30; }
+.bn { background: #f5ede8; color: #6b2e00; }
+.events { padding: 0 12px 10px 26px; }
+.event { font-size: 13.5px; color: #555; line-height: 1.55; border-left: 2px solid #e2ddd4; padding: 3px 0 3px 10px; margin-bottom: 3px; }
+.src { font-size: 11px; color: #aaa; margin-left: 5px; }
+.misc-entry { background: #fff; border: 1px solid #e2ddd4; border-radius: 4px; padding: 8px 12px; margin-bottom: 4px; }
+.misc-name { font-size: 14px; font-family: Georgia, serif; margin-bottom: 3px; }
+.misc-note { font-size: 13px; color: #555; line-height: 1.5; }
+.count { font-family: sans-serif; font-size: 12px; color: #aaa; margin-left: 8px; }
+.footer { margin-top: 2rem; padding-top: 1rem; border-top: 1px solid #e2ddd4; font-family: sans-serif; font-size: 12px; color: #aaa; }
 </style>
 </head>
 <body>
 
-<div class="page-header">
-  <h1>Cortés Personnel</h1>
-  <p>Compiled from Díaz, Gómara, Cortés, Aguilar, Ixtlilxóchitl, Durán, and related primary sources.</p>
-</div>
-
-<div class="intro-note">
+<h1>Cortés Personnel</h1>
+<div class="intro">
   Gómara reports just before departing Cuba: 550 Spaniards, ~50 sailors, 200 Cuban islander porters, several Negroes, a few Indian women, 16 horses. Díaz counts at Cozumel: 508 men (not counting pilots/captains/sailors ~100), 16 horses, 11 ships, 13 musketeers, 32 crossbowmen, 10 brass guns, 4 falconets (Díaz p. 58–59). <strong>*Asterisk</strong> denotes persons first mentioned after Narváez's men joined Cortés.
 </div>
 
 <div class="controls">
-  <div class="search-row">
-    <input type="text" id="search" placeholder="Search by name, role, source, or keyword…" oninput="filterAll()">
-    <span class="result-count" id="result-count"></span>
+  <div style="display:flex;align-items:center;gap:8px">
+    <input type="text" id="search" placeholder="Search by name, role, source, or keyword…">
+    <span class="count" id="count"></span>
   </div>
-  <div class="alpha-nav" id="alpha-nav"></div>
+  <div class="alpha" id="alpha"></div>
 </div>
 
-<div id="list-container"></div>
+<div id="output"></div>
 
-<div class="page-footer">Sources: Bernal Díaz del Castillo · Francisco López de Gómara · Hernán Cortés (Letters) · Francisco de Aguilar · Fernando de Alva Ixtlilxóchitl · Diego Durán · Bernardino Vázquez de Tapia</div>
+<div class="footer">Sources: Bernal Díaz del Castillo · Francisco López de Gómara · Hernán Cortés (Letters) · Francisco de Aguilar · Fernando de Alva Ixtlilxóchitl · Diego Durán · Bernardino Vázquez de Tapia</div>
 
 <script>
-const MISC = {
-  label: "Miscellaneous Groups",
-  id: "misc",
-  entries: [
-    { name: "2 Italians*", note: "Apparently healers. Helped cure some people, including Aguilar.", src: "Aguilar Entry Six" },
-    { name: "15 Crossbowmen & Musketmen", note: "Sent to explore inland Yucatan; not clear if 30 or 15 mixed units.", src: "Diaz 72" },
-    { name: "15 Sailors", note: "Sent back to Spain with first gold." },
-    { name: "200 Islanders from Cuba", note: "Bearers and servants.", src: "Gom p. 23, 55" },
-    { name: "200 Soldiers (marched to Mexico)", note: "Gómara says 150." },
-    { name: '"Several Negroes"', note: "Tadeo, Roberto (unconfirmed). Possibly included the 'Black man' blamed for bringing Smallpox by Durán and Ixtlilxóchitl — said to be with Narváez group.", src: "Gom p. 23" },
-    { name: "Woman Soldier", note: 'Led a battle after the Fall of Tenochtitlan, earning lands. Married to Martín Partidor. Possibly María de Estrada.', src: "Dur 561" },
-    { name: '"The Men of the Rock"', note: "Sailors from Gibraltar, Diego loyalists who plotted to steal a boat and leave for Cuba. Received 200 lashes each. 7 were also flogged for stealing pork from Berrio.", src: "Diaz 129, 61" },
-    { name: '"The Martyr" — Young Sevillian Man*', note: "Captured in Tenochtitlan and made to shoot at the Spanish. He shot weakly and hit no one. Killed when the Mexica realized what he was doing.", src: "Dur 554" },
-  ]
-};
-
-const PEOPLE = [
-  {
-    name: "Aldrete*", roles: ["King's Treasurer"], loyalty: "", sources: ["Aguilar 8"],
-    events: [{ text: "King's first treasurer.", src: "Aguilar 8" }]
-  },
-  {
-    name: "Alonzo de Avila", roles: ["Captain"], loyalty: "GRIJ", sources: ["Diaz 27","Diaz 102"],
-    events: [
-      { text: "One of four captains on Grijalva expedition.", src: "Diaz 27" },
-      { text: "Joined Cortés in Trinidad. Funded one of the Cortés ships." },
-      { text: "Appointed Captain of 1 of 11 ships in Cuba." },
-      { text: "Appointed Accountant of Vera Cruz.", src: "Diaz 102" },
-      { text: "Described as 'ill tempered' as captain of the Quiahuitzlan Expedition.", src: "Diaz 109" },
-      { text: "Given wife in Tlaxcala.", src: "Diaz 178" },
-      { text: "Went to seize Moctezuma in his quarters.", src: "Diaz 245" },
-      { text: "Went to the Temple with Moctezuma and 150 soldiers to prevent sacrifices — Moctezuma sacrificed men and boys anyway.", src: "Diaz 256" },
-      { text: "Went on hunting trip with Moctezuma on two sloops, with 200 soldiers.", src: "Diaz 257" },
-      { text: "Oversaw minting of Aztec gold after Moctezuma agreed to hand it over.", src: "Diaz 272" },
-    ]
-  },
-  {
-    name: "Alonso de Grado", roles: [], loyalty: "", sources: ["Diaz 251"],
-    events: [
-      { text: "Put in charge of Villa Rica by Cortés after Escalante was killed; later relieved and briefly imprisoned by Cortés.", src: "Diaz 251" },
-      { text: "Was opposed to the march to Mexico and was a chief agitator.", src: "Diaz 251" },
-    ]
-  },
-  {
-    name: "Alonso Hernandez Puertocarrero, Capt.", roles: ["Captain"], loyalty: "GRIJ", sources: ["Diaz 50","Gom 88"],
-    events: [
-      { text: "Joined from Santispiritus, Cuba." },
-      { text: "Cortés bought him a gray mare in Trinidad.", src: "Diaz p. 50" },
-      { text: "Funded one of the Cortés ships. Appointed Captain of 1 of 11 ships in Cuba." },
-      { text: "Given Malintzin as a wife after Battle of Cintla.", src: "Diaz 83" },
-      { text: "Named alcayde of Vera Cruz. Was given a wife by Cuesco." },
-      { text: "Declared Proctor and sent back to Spain with first gold.", src: "Gom 88" },
-      { text: "Helped fit out the Grijalba expedition." },
-    ]
-  },
-  {
-    name: "Alonso Penate", roles: [], loyalty: "Diego loyalist", sources: ["Cortés p. 87"],
-    events: [
-      { text: "Named by Cortés in letter 2 as one of four traitors who tried to steal a ship.", src: "Cortés p. 87" },
-    ]
-  },
-  {
-    name: "Alonso Rodriguez", roles: ["Mine owner"], loyalty: "", sources: ["Diaz p. 50"],
-    events: [{ text: "Owned gold mines (in Cuba?). Joined in Trinidad.", src: "Diaz p. 50" }]
-  },
-  {
-    name: "Alonso Romero", roles: ["Alguacil"], loyalty: "", sources: ["Diaz 102"],
-    events: [{ text: "Appointed Alguaciles (storekeeper) of Vera Cruz.", src: "Diaz 102" }]
-  },
-  {
-    name: "Alonso Yañez", roles: ["Carpenter"], loyalty: "", sources: ["Diaz p. 62"],
-    events: [
-      { text: "Built altar and cross in Cozumel after knocking down idols." },
-      { text: "Built large wooden cross at Cintla.", src: "Diaz 81" },
-      { text: "Discovered secret chamber full of gold and treasure in Axacayatl's palace.", src: "Diaz 241" },
-    ]
-  },
-  {
-    name: "Alvaro Lopez", roles: ["Carpenter"], loyalty: "", sources: ["Diaz p. 62"],
-    events: [
-      { text: "Built altar and cross in Cozumel after knocking down idols." },
-      { text: "Built large wooden cross at Cintla.", src: "Diaz 81" },
-    ]
-  },
-  {
-    name: "Andres de Duero*", roles: [], loyalty: "Narváez", sources: ["Diaz 308"],
-    events: [{ text: "Leader in Narváez's army who defied Cortés but gave in and marched to Tepeaca.", src: "Diaz 308" }]
-  },
-  {
-    name: "Andres de Monjaraz*", roles: [], loyalty: "", sources: ["Cort 175"],
-    events: [{ text: "Attacked Tlayacapan in the Chalco campaign in 1521.", src: "Cort 175" }]
-  },
-  {
-    name: "Andres de Tapia", roles: ["Author"], loyalty: "", sources: ["Gom 31","Diaz p. 63"],
-    events: [
-      { text: "First to spot Aguilar, the Spanish slave.", src: "Gom 31, Diaz p. 63" },
-      { text: "Wrote his own version of events." },
-      { text: "Returned to Villa Rica with Aguilar and Valdelamar to check on Nauhtla incident.", src: "Aguilar Ch 5" },
-      { text: "Was sent up the Templo Mayor, triggering removal of idols and significant tension.", src: "De Tapia" },
-      { text: "Settled a dispute between Cholula and Tlaxcala, returned in time to hear about Narváez's arrival.", src: "De Tapia" },
-      { text: "Later described the skull rack to Gómara.", src: "Gom 167" },
-    ]
-  },
-  {
-    name: "Andres Nuñez", roles: ["Boat builder"], loyalty: "", sources: ["Diaz 255"],
-    events: [
-      { text: "Appears to have been kidnapped from Garay expedition.", src: "Diaz 133" },
-      { text: "Built the two sloops in Tenochtitlan for Moctezuma.", src: "Diaz 255" },
-      { text: "Sent to Villa Rica to build 3 ships to return to Spain with Moctezuma.", src: "Diaz 279" },
-    ]
-  },
-  {
-    name: "Angulo", roles: [], loyalty: "", sources: [],
-    events: [{ text: "Joined in Havana." }]
-  },
-  {
-    name: "Anton de Alaminos", roles: ["Pilot"], loyalty: "CORD, GRIJ", sources: ["Gom 88","Diaz 126"],
-    events: [
-      { text: "Native of Palos; had sailed with Ponce de León, Francisco de Córdoba, and Grijalva." },
-      { text: "Senior ship pilot, sent back to Spain with first shipment of gold.", src: "Gom 88, Diaz 126" },
-      { text: "Piloted one of two ships on 10-day mission up the coast where Montejo spotted Quiahuitzlan." },
-    ]
-  },
-  {
-    name: "Anton del Rio", roles: ["Messenger"], loyalty: "", sources: ["Aguilar 7"],
-    events: [{ text: "Messenger sent from Tenochtitlan by Cortés; saw the Mexica taking down bridges and deepening canals.", src: "Aguilar 7th Entry" }]
-  },
-  {
-    name: "Antonio de Arriaga*", roles: ["Captain"], loyalty: "", sources: ["Ixtlil 307"],
-    events: [{ text: "Lower captain on Siege of Tenochtitlan.", src: "Ixtlil 307" }]
-  },
-  {
-    name: "Antonio de Carvajal*", roles: ["Brig commander"], loyalty: "", sources: ["Ixtlil 307"],
-    events: [
-      { text: "From Zamora.", src: "Ixtlil 307" },
-      { text: "Commanded brig in Siege of Tenochtitlan.", src: "Ixtlil 307" },
-    ]
-  },
-  {
-    name: "Antonio de Quiñones*", roles: [], loyalty: "", sources: ["Gom 220"],
-    events: [{ text: "Commanded the lead column on Noche Triste.", src: "Gom 220" }]
-  },
-  {
-    name: "Antonio de Villafana*", roles: [], loyalty: "", sources: ["Diaz 350"],
-    events: [{ text: "Led conspiracy against Cortés after Noche Triste.", src: "Diaz 350" }]
-  },
-  {
-    name: "Antonio de Villaroel", roles: ["Standard bearer"], loyalty: "", sources: [],
-    events: []
-  },
-  {
-    name: "Arbenga", roles: ["Gunner"], loyalty: "Levantine", sources: ["Diaz p. 55"],
-    events: [
-      { text: "Ordered to clean guns and check ammo before battles of Potonchan/Cintla.", src: "Diaz 59" },
-      { text: "Went on hunting trip with Moctezuma on two sloops, with 200 soldiers.", src: "Diaz 257" },
-    ]
-  },
-  {
-    name: "Baena", roles: [], loyalty: "", sources: ["Diaz p. 50"],
-    events: [{ text: "Joined in Trinidad.", src: "Diaz p. 50" }]
-  },
-  {
-    name: "Barrientos", roles: ["Soldier"], loyalty: "", sources: ["Diaz 269"],
-    events: [
-      { text: "Went with Pizarro to the mines in Tuxtepec; left there to farm cocoa and cotton.", src: "Diaz 269" },
-      { text: "See also Hernando de Barrientos — possibly same person." },
-    ]
-  },
-  {
-    name: "Bartolome de Usagre", roles: ["Gunner"], loyalty: "", sources: ["Diaz p. 55"],
-    events: [
-      { text: "Ordered to clean guns and check ammo before battles of Potonchan/Cintla.", src: "Diaz 59" },
-    ]
-  },
-  {
-    name: "Bartolome de Olmedo", roles: ["Friar", "Mercedarian?"], loyalty: "", sources: ["Diaz 128"],
-    events: [
-      { text: "Received a tipping letter from his friar brother about Velázquez's plan." },
-      { text: "Held mass in Cempoala after toppling idols; baptized 8 girls.", src: "Diaz 128" },
-      { text: "In Xico, discouraged Cortés from pushing the Faith too hard or too early." },
-      { text: "Again advocated in Cholula and Tlaxcala that it was too early to push the Faith.", src: "Diaz 176" },
-      { text: "Atop Tlatelolco Pyramid, advised Cortés not to pressure Moctezuma about building a church.", src: "Diaz 235" },
-      { text: "Went to the Temple with Moctezuma and 150 soldiers to prevent sacrifices.", src: "Diaz 256" },
-      { text: "Sent to the coast to present Narváez with a letter; ran into Cortés en route carrying a letter from Narváez.", src: "Cort 121" },
-    ]
-  },
-  {
-    name: "Bartolome Garcia", roles: ["Miner"], loyalty: "", sources: ["Diaz p. 50"],
-    events: [
-      { text: "Joined in Trinidad. Sold his co-owned horse El Arriero to Cortés." },
-    ]
-  },
-  {
-    name: "Bernal Diaz", roles: ["Author", "Soldier"], loyalty: "CORD", sources: ["Diaz"],
-    events: [
-      { text: "Author of True History of the Conquest of New Spain." },
-      { text: "Marched overland to Havana." },
-      { text: "Selected to go visit Moctezuma on Day 2 in Tenochtitlan.", src: "Diaz p. 221" },
-      { text: "Was part of the group who convinced Cortés to seize Moctezuma.", src: "Diaz 243" },
-      { text: "Was given a girl and gold by Moctezuma.", src: "Diaz 254" },
-      { text: "Went to Cempoala to fight Narváez, says little about the fight itself.", src: "Diaz 283" },
-      { text: "In the Siege of Tenochtitlan, fought with Alvarado.", src: "Diaz 362" },
-    ]
-  },
-  {
-    name: "Bernardino Vazquez de Tapia", roles: ["Horseman", "Author"], loyalty: "GRIJ", sources: ["Bernardino"],
-    events: [
-      { text: "Wrote his own account of the conquest." },
-      { text: "Came to Cuba in 1513. Says he's one of 13 horsemen.", src: "Bernardino" },
-      { text: "Sent to Tenochtitlan as a messenger but was turned around due to illness or Moctezuma's orders.", src: "Diaz p. 186" },
-      { text: "Stayed in Tenochtitlan when Cortés went after Narváez; says they were brutally attacked.", src: "Bernardino" },
-    ]
-  },
-  {
-    name: "Bernardino de Coria", roles: [], loyalty: "Diego loyalist (turned)", sources: ["Diaz 129"],
-    events: [
-      { text: "Was part of plot to steal a boat and sail to Cuba, but flipped and told all to Cortés.", src: "Diaz 129" },
-    ]
-  },
-  {
-    name: "Berrio", roles: ["Soldier"], loyalty: "", sources: [],
-    events: [{ text: "Victim of pork theft by 'Men of the Rock,' who were subsequently flogged." }]
-  },
-  {
-    name: "Botello (Puerto de Plata)", roles: ["Seer / Sorcerer"], loyalty: "", sources: ["Diaz 297"],
-    events: [
-      { text: "Came to tell Cortés that Pedro de Alvarado was in trouble in Mexico.", src: "Aguilar Ch 6" },
-      { text: "Díaz describes him as a sorcerer; he prophesied they must leave that night (Noche Triste) or all die.", src: "Diaz 297" },
-    ]
-  },
-  {
-    name: "De Briones", roles: ["Brig commander"], loyalty: "", sources: ["Ixtlil 307"],
-    events: [
-      { text: "From Salamanca. First name lost.", src: "Ixtlil 307" },
-      { text: "Commanded brig in Siege of Tenochtitlan.", src: "Ixtlil 307" },
-    ]
-  },
-  {
-    name: "Camacho", roles: ["Pilot"], loyalty: "", sources: ["Diaz p. 57"],
-    events: [{ text: "Pilot of Bernal Díaz's boat.", src: "Diaz p. 57" }]
-  },
-  {
-    name: "Castaneda / Castaneda Xicotencatl", roles: [], loyalty: "", sources: ["Flor 210"],
-    events: [{ text: "Led an attack during the second siege of Tenochtitlan.", src: "Flor 210" }]
-  },
-  {
-    name: "Cervantes", roles: ["Jester"], loyalty: "", sources: ["Diaz 269"],
-    events: [{ text: "Went with Pizarro to the mines in Tuxtepec; left there to farm cocoa and cotton.", src: "Diaz 269" }]
-  },
-  {
-    name: "Corral", roles: ["Ensign", "Standard bearer"], loyalty: "", sources: ["Diaz 102"],
-    events: [
-      { text: "Chosen as standard bearer in Vera Cruz.", src: "Diaz 102" },
-      { text: "(Cristóbal Corral?) Attacked Tlayacapan in the Chalco campaign in 1521.", src: "Cort 175" },
-    ]
-  },
-  {
-    name: "Cristobal de Guzman", roles: ["Steward"], loyalty: "", sources: ["Diaz p. 55"],
-    events: [
-      { text: "Cortés's steward who later took Cuahtemoc prisoner.", src: "Diaz p. 55" },
-      { text: "Brought the treasure out on Noche Triste for soldiers to carry.", src: "Diaz 298" },
-      { text: "Captured in Siege of Tenochtitlan; taken to Cuauhtemoc." },
-    ]
-  },
-  {
-    name: "Cristobal de Olid, "the Valiant", Capt.", roles: ["Captain", "Quartermaster"], loyalty: "", sources: ["Diaz p. 50"],
-    events: [
-      { text: "From Baeza. Joined in Trinidad.", src: "Diaz p. 50" },
-      { text: "Appointed Captain of 1 of 11 ships in Cuba." },
-      { text: "Sailed a caravel to Yucatan looking for Grijalba, failed and returned.", src: "Gom 18" },
-      { text: "Appointed Quartermaster of Vera Cruz.", src: "Diaz 102" },
-      { text: "His horse was killed in battle against Otomies/Tlaxcallans.", src: "Aguilar Ch 3" },
-      { text: "Given wife in Tlaxcala.", src: "Diaz 178" },
-      { text: "Went on hunting trip with Moctezuma on two sloops, with 200 soldiers.", src: "Diaz 257" },
-      { text: "Fought bravely at Battle of Otumba.", src: "Diaz 304" },
-      { text: "Led battalion to Tlacopan then Chapultepec to open the Siege of Tenochtitlan." },
-      { text: "Helped save Cortés in Siege of Tenochtitlan.", src: "Diaz 380" },
-    ]
-  },
-  {
-    name: "De Mora", roles: [], loyalty: "", sources: [],
-    events: [{ text: "From Ciudad Rodrigo. Took poultry in front of Cortés and was punished in Xico." }]
-  },
-  {
-    name: "Diego de Godoy", roles: ["Royal Notary"], loyalty: "", sources: [],
-    events: []
-  },
-  {
-    name: "Diego de Ordaz, Capt.", roles: ["Captain"], loyalty: "Diego loyalist / GRIJ", sources: ["Diaz"],
-    events: [
-      { text: "Sent by Velázquez to keep an eye on Cortés." },
-      { text: "Talked the mayor of Trinidad into silence on behalf of Cortés.", src: "Diaz p. 52" },
-      { text: "Took a caravel from Trinidad to intercept the Sedeño ship.", src: "Gom p. 22" },
-      { text: "Was one of the plotters who tried to steal the caravel; tried to trap Cortés.", src: "Aguilar Ch 3" },
-      { text: "Sent to Cape Catoche to wait for Spaniards living in Mexico." },
-      { text: "Funded one of the Cortés ships. Appointed Captain of 1 of 11 ships in Cuba." },
-      { text: "Battle of Cintla — appointed command of infantry and ranged units." },
-      { text: "Arrested after founding of Vera Cruz; sentenced to hang but did not.", src: "Aguilar Ch 3" },
-      { text: "Climbed Popocatepetl." },
-      { text: "Selected to visit Moctezuma on Day 2 in Tenochtitlan.", src: "Diaz p. 221" },
-      { text: "Confronted Cortés about seizing Moctezuma.", src: "Diaz 243" },
-      { text: "Volunteered to investigate Coatzicoalco River; came across a Mexican garrison and reprimanded captains for robbing locals.", src: "Diaz 266" },
-      { text: "Led 400 soldiers out of the palace fort in Tenochtitlan; immediately attacked and wounded.", src: "Diaz 288" },
-      { text: "Chosen to lead the fighting men on Noche Triste.", src: "Diaz 297" },
-    ]
-  },
-  {
-    name: "Diego de Pineda(o)", roles: [], loyalty: "", sources: [],
-    events: [{ text: "Joined in Trinidad." }]
-  },
-  {
-    name: "Diego de Soto of Toro", roles: [], loyalty: "", sources: [],
-    events: [{ text: "Joined in Havana." }]
-  },
-  {
-    name: "Escalona (Younger)", roles: ["Soldier"], loyalty: "", sources: ["Diaz 269"],
-    events: [{ text: "Went with Pizarro to the mines in Tuxtepec; left there to farm cocoa and cotton.", src: "Diaz 269" }]
-  },
-  {
-    name: "Escobar 'the Page', Capt.", roles: ["Captain"], loyalty: "Diego loyalist", sources: ["Diaz 105"],
-    events: [
-      { text: "Appointed Captain of 1 of 11 ships in Cuba." },
-      { text: "Sent to explore 'Boca de Terminos' near Campeche. Found the greyhound left by Grijalva.", src: "Diaz p. 67" },
-      { text: "Arrested after founding of Vera Cruz.", src: "Diaz 105" },
-    ]
-  },
-  {
-    name: "Francisco (translator)", roles: ["Translator"], loyalty: "", sources: ["Diaz 82"],
-    events: [
-      { text: "Native translator captured on Grijalva expedition. Did not speak Tabascan but could speak 'Culua'.", src: "Diaz 82" },
-      { text: "May be the second translator named alongside Melchior/Julián." },
-    ]
-  },
-  {
-    name: "Francisco de Aguilar", roles: ["Author", "Soldier"], loyalty: "", sources: ["Aguilar"],
-    events: [
-      { text: "Author of A Short Account of the Conquest of New Spain." },
-      { text: "Sent to ask Moctezuma to grant a tour of Tlatelolco to Cortés.", src: "Diaz 231" },
-      { text: "Went back to Villa Rica to get the Nauhtla chief, with De Tapia and Valdelamar.", src: "Aguilar Ch 5" },
-      { text: "Went to Cempoala with Cortés to fight Narváez.", src: "Aguilar Ch 6" },
-      { text: "Was in charge of watching Moctezuma for a time.", src: "Aguilar Ch 6" },
-    ]
-  },
-  {
-    name: "Francisco Fernandez", roles: ["Royal Notary"], loyalty: "", sources: ["Gom 66"],
-    events: [{ text: "Royal Notary.", src: "Gom 66" }]
-  },
-  {
-    name: "Francisco de Lugo, Capt.", roles: ["Captain"], loyalty: "", sources: ["Diaz 243"],
-    events: [
-      { text: "Went ashore at Campeche. Relative of Bernal Díaz. Owner of a greyhound.", src: "Diaz p. 66" },
-      { text: "Was told about the secret treasure in Axacayatl's palace and went to Cortés.", src: "Diaz 243" },
-      { text: "Went to seize Moctezuma in his quarters.", src: "Diaz 245" },
-      { text: "Went to the Temple with Moctezuma and 150 soldiers to prevent sacrifices.", src: "Diaz 256" },
-      { text: "Noche Triste: ordered to lead a battalion of 50 of the best soldiers to react to enemy pushes.", src: "Diaz 297" },
-    ]
-  },
-  {
-    name: "Francisco de Montejo, Capt.", roles: ["Captain"], loyalty: "GRIJ", sources: ["Diaz 27"],
-    events: [
-      { text: "One of four captains on Grijalva expedition.", src: "Diaz 27" },
-      { text: "Joined in Havana. Funded one of the ships." },
-      { text: "Appointed Captain of 1 of 11 ships in Cuba." },
-      { text: "Led 10-day mission from Ulua north; spotted Quiahuitzlan from the ship." },
-      { text: "Declared Proctor and sent back to Spain with first letters/treasures July 16, 1519.", src: "Gom 88" },
-      { text: "Named alcayde of Vera Cruz with Puertocarrero." },
-      { text: "Fitted out the Grijalba expedition." },
-      { text: "Later executed the conquest of Yucatan." },
-    ]
-  },
-  {
-    name: "Francisco de Morla", roles: ["Ships Captain"], loyalty: "", sources: ["Gom"],
-    events: [
-      { text: "On the crossing from Cuba his ship lost its rudder. Cortés dove into the water with a rope to grab it.", src: "Gom p. 26" },
-      { text: "Listed by Díaz as lost in Noche Triste.", src: "Diaz 301" },
-    ]
-  },
-  {
-    name: "Francisco de Orozco", roles: ["Artillery Captain"], loyalty: "", sources: [],
-    events: [{ text: "Appointed Captain of Artillery in Cozumel." }]
-  },
-  {
-    name: "Francisco Rodriguez Magarino*", roles: ["Brig commander"], loyalty: "", sources: ["Ixtlil 307"],
-    events: [
-      { text: "From Mérida.", src: "Ixtlil 307" },
-      { text: "Commanded brig in Siege of Tenochtitlan.", src: "Ixtlil 307" },
-    ]
-  },
-  {
-    name: "Francisco de Salceda / Saucedo, Capt.", roles: ["Captain"], loyalty: "", sources: ["Diaz 297"],
-    events: [
-      { text: "Appointed Captain of 1 of 11 ships in Cuba." },
-      { text: "Noche Triste: ordered to lead a battalion of 50 of the best soldiers.", src: "Diaz 297" },
-      { text: "Listed by Díaz as lost in Noche Triste.", src: "Diaz 301" },
-    ]
-  },
-  {
-    name: "Francisco Verdugo", roles: [], loyalty: "", sources: ["Cort 175"],
-    events: [{ text: "Attacked Tlayacapan in the Chalco campaign in 1521.", src: "Cort 175" }]
-  },
-  {
-    name: "Garcia Holguin / Garci Holguin*, Capt.", roles: ["Captain", "Brig commander"], loyalty: "", sources: ["Ixtlil 307"],
-    events: [
-      { text: "From Cáceres.", src: "Ixtlil 307" },
-      { text: "Seized Cuauhtemoc.", src: "Aguilar" },
-      { text: "Commanded brig in Siege of Tenochtitlan.", src: "Ixtlil 307" },
-    ]
-  },
-  {
-    name: "Garcicaro", roles: [], loyalty: "", sources: ["Diaz p. 54"],
-    events: [{ text: "Joined in Havana.", src: "Diaz p. 54" }]
-  },
-  {
-    name: "Gines Nortes", roles: [], loyalty: "", sources: ["Diaz p. 58"],
-    events: [{ text: "Brought a small ship loaded with supplies.", src: "Diaz p. 58" }]
-  },
-  {
-    name: "Gonzalo Lopez de Jimena", roles: [], loyalty: "", sources: [],
-    events: [{ text: "Joined from Santispiritus, Cuba. Lopez brother also joined." }]
-  },
-  {
-    name: "Gaspar Sanchez", roles: [], loyalty: "", sources: ["Diaz p. 50"],
-    events: [{ text: "Nephew of the treasurer of Cuba. Joined in Trinidad.", src: "Diaz p. 50" }]
-  },
-  {
-    name: "Gonzalo Dominguez", roles: [], loyalty: "", sources: ["Diaz 304"],
-    events: [{ text: "Fought bravely at Battle of Otumba.", src: "Diaz 304" }]
-  },
-  {
-    name: "Gonzalo de Sandoval", roles: ["Captain"], loyalty: "Diego loyalist", sources: ["Diaz"],
-    events: [
-      { text: "Joined from Santispiritus, Cuba. Would go on to his own fame." },
-      { text: "Named a second captain.", src: "Aguilar Ch 3" },
-      { text: "Put in charge of force at Cempoala while Cortés dealt with a Spanish ship.", src: "Diaz 132" },
-      { text: "Given wife in Tlaxcala.", src: "Diaz 178" },
-      { text: "Selected to visit Moctezuma on Day 2.", src: "Diaz p. 221" },
-      { text: "Confronted Cortés about seizing Moctezuma.", src: "Diaz 243" },
-      { text: "Went to seize Moctezuma in his quarters.", src: "Diaz 245" },
-      { text: "Sent with 80 men to arrest any of Narváez's men acting as officials.", src: "Cort 125, Gom 203" },
-      { text: "Chosen to lead the fighting men on Noche Triste.", src: "Diaz 297" },
-      { text: "Fought bravely at Battle of Otumba.", src: "Diaz 304" },
-      { text: "Sent to Chalco to expel Mexica forces with Tlaxcalans between sieges.", src: "Ixtlil 292" },
-      { text: "Led battalion to Itztapalapa to open Siege of Tenochtitlan." },
-    ]
-  },
-  {
-    name: "Gonzalo Mejia", roles: ["Treasurer"], loyalty: "", sources: ["Diaz 97","Diaz 102"],
-    events: [
-      { text: "Joined in Trinidad.", src: "Diaz p. 50" },
-      { text: "Appointed treasurer at Vera Cruz.", src: "Diaz 102" },
-      { text: "Oversaw the minting of Aztec gold into weighed bars after Moctezuma handed it over." },
-    ]
-  },
-  {
-    name: "Gonzalo de Umbria (Ungria)", roles: ["Pilot"], loyalty: "Diego loyalist", sources: ["Cortés 87","Diaz 129"],
-    events: [
-      { text: "Named by Cortés in letter 2 as one of four traitors who tried to steal ship.", src: "Cortés 87, Aguilar Ch 3" },
-      { text: "Sentenced to having his feet cut off by Cortés (or whipped — accounts differ).", src: "Diaz 129, Gom 89" },
-      { text: "Dispatched to mine in Zacatula; given 40 days to make the journey and return.", src: "Diaz 265" },
-      { text: "Returned with 300 pesos gold, two chieftains, jewels, and intelligence on a powerful relative of Moctezuma.", src: "Diaz 267" },
-    ]
-  },
-  {
-    name: "Gutierrez", roles: [], loyalty: "", sources: ["Diaz p. 54"],
-    events: [{ text: "Joined in Havana.", src: "Diaz p. 54" }]
-  },
-  {
-    name: "Gutierrez de Badajoz*", roles: [], loyalty: "", sources: ["Diaz 397"],
-    events: [{ text: "Charged the Tlatelolco pyramid but fell down the steps. Shrines were captured and burned.", src: "Diaz 397" }]
-  },
-  {
-    name: "Guzman / Hulano Guzman (also Juan de Guzman)", roles: ["Butler", "Chamberlain"], loyalty: "", sources: ["Diaz p. 55","Aguilar 8"],
-    events: [
-      { text: "Appointed butler in Havana; died soon after.", src: "Diaz p. 55" },
-      { text: "Cortés's butler/chamberlain.", src: "Aguilar 8, Gom 219" },
-      { text: "Captured alive in second siege of Tenochtitlan.", src: "Aguilar 8th" },
-    ]
-  },
-  {
-    name: "Heredia", roles: ["Musketeer"], loyalty: "Basque", sources: [],
-    events: [{ text: "Old Basque musketeer. Went with Pizarro to the mines in Tuxtepec; left there to farm cocoa and cotton.", src: "Diaz 269" }]
-  },
-  {
-    name: "Hernán Cortés", roles: ["Captain General", "Governor"], loyalty: "", sources: [],
-    events: [
-      { text: "Born 1485, Medellín, Spain. Parents: Martín Cortés de Monroy and Doña Catalina Pizarro Altamirano.", src: "Ixtlil 138, Gomara" },
-      { text: "Before heading to Mexico became very flashy, adorning himself in finery, feathers, and gold." },
-      { text: "Díaz describes him as 'diligent in all he did.' Gómara notes his cheering and urging encouraged men in battles against Tlaxcala." },
-      { text: "When horses collapsed early on route to Tzomantzinco (a bad omen), carried on anyway — said upon returning: 'Call not a day evil until it has passed.'" },
-      { text: "Díaz reports Cortés often consulted with his men on key decisions, such as which route to take to Mexico.", src: "Diaz p. 195" },
-    ]
-  },
-  {
-    name: "Hernando Alonso de Villanueva 'El Manquillo'", roles: [], loyalty: "", sources: [],
-    events: [{ text: "Was wounded by Alonzo de Avila for falling out of formation at Quiahuitzlan." }]
-  },
-  {
-    name: "Hernando de Barrientos", roles: [], loyalty: "", sources: ["Ixtlil 306"],
-    events: [{ text: "Spaniard who went missing and turned up leading forces from Chinantlan.", src: "Ixtlil 306" }]
-  },
-  {
-    name: "Hernando de Lema*", roles: ["Brig commander"], loyalty: "", sources: ["Ixtlil 307"],
-    events: [{ text: "Led a brigantine on Siege of Tenochtitlan.", src: "Ixtlil 307" }]
-  },
-  {
-    name: "Jeronimo / Hernando de Aguilar", roles: ["Translator", "Former Spanish slave"], loyalty: "", sources: ["Gom 31","Aguilar Ch 3"],
-    events: [
-      { text: "Spanish slave of a Cacique; returned to Cortés at Cozumel." },
-      { text: "At Cozumel told Cortés he was shipwrecked 8 years prior (1511), sailing from Darien to Santo Domingo. Ship wrecked on shoals; 7 died in the boat, Valdivia and 4 others were sacrificed; he and others served a sympathetic chief.", src: "Gom 31–32" },
-      { text: "From Écija.", src: "Gom 31" },
-      { text: "Went to seize Moctezuma in his quarters.", src: "Diaz 245" },
-    ]
-  },
-  {
-    name: "Joan Paez, Capt.", roles: ["Captain"], loyalty: "", sources: ["Salazar Ch 2"],
-    events: [
-      { text: "Did something in Tlaxcala with his 80 men that angered Cortés, who threatened to hang him and called him a coward. Appears to have been driven from camp.", src: "Sal Ch 2" },
-    ]
-  },
-  {
-    name: "Juan Alvarez 'El Manquillo'", roles: ["Pilot"], loyalty: "CORD, GRIJ", sources: [],
-    events: []
-  },
-  {
-    name: "Juan Benitez", roles: ["Crossbowman", "Repairman"], loyalty: "", sources: [],
-    events: [{ text: "Crossbowman put in charge of repairs and maintenance at Cozumel. Expert repairman." }]
-  },
-  {
-    name: "Juan de Caceres", roles: ["Steward"], loyalty: "", sources: [],
-    events: [{ text: "Appointed steward in Havana." }]
-  },
-  {
-    name: "Juan Catalan", roles: ["Gunner", "Healer?"], loyalty: "", sources: ["Diaz p. 55"],
-    events: [
-      { text: "Ordered to clean guns and check ammo before battles of Potonchan/Cintla.", src: "Diaz 59" },
-      { text: "Was healing people in the Alvarado group during the Siege of Tenochtitlan.", src: "Diaz 365" },
-    ]
-  },
-  {
-    name: "Juan (Diego) Cermeño", roles: ["Pilot"], loyalty: "Diego loyalist", sources: ["Gom","Cort p. 87"],
-    events: [
-      { text: "Named by Cortés in letter 2 as one of four traitors who tried to steal ship.", src: "Cortés p. 87" },
-      { text: "Sentenced to death for his part in the plot.", src: "Diaz 129" },
-      { text: "Díaz says he was hanged; Gómara agrees it was carried out.", src: "Diaz 265" },
-    ]
-  },
-  {
-    name: "Juan Cedeño / Sedeño", roles: ["Ship owner"], loyalty: "", sources: ["Diaz 146"],
-    events: [
-      { text: "From Santispiritus. Owned a ship; considered the richest of the expedition due to owning ship, horse, and enslaved person.", src: "Diaz 146" },
-      { text: "His chestnut mare gave birth on the ship to Mexico.", src: "Diaz p. 55" },
-      { text: "Owner of horse killed under Morón.", src: "Diaz p. 146" },
-    ]
-  },
-  {
-    name: "Juan Diaz, Padre", roles: ["Padre"], loyalty: "Diego loyalist", sources: [],
-    events: [
-      { text: "Delivered mass on Easter in Ulua with Mexica present.", src: "Diaz p. 89" },
-      { text: "Was part of the scheme to go back to Cuba but escaped punishment as a man of the cloth.", src: "Diaz 129" },
-      { text: "Said mass in Tlaxcala; urged Cortés not to push religion too hard.", src: "Diaz 175" },
-    ]
-  },
-  {
-    name: "Juanes de Fuenterrabia", roles: [], loyalty: "", sources: ["Diaz p. 50"],
-    events: [{ text: "Joined in Trinidad.", src: "Diaz p. 50" }]
-  },
-  {
-    name: "Juan de Escalante, Capt.", roles: ["Captain", "High Constable"], loyalty: "", sources: ["Diaz 102"],
-    events: [
-      { text: "In departing Cozumel his ship began to sink.", src: "Diaz p. 63" },
-      { text: "Appointed High Constable in Vera Cruz.", src: "Diaz 102" },
-      { text: "Cortés ordered him to sink the ships and put him in charge of the settlement when leaving for Mexico." },
-      { text: "Left in charge of Villa Rica.", src: "Aguilar Ch 3" },
-      { text: "Wounded in Almeria and died in Villa Rica later.", src: "Diaz 244" },
-    ]
-  },
-  {
-    name: "Juan Garrido", roles: ["African Conquistador"], loyalty: "", sources: [],
-    events: [{ text: "African conquistador who founded the church of San Hipólito to honor his fallen comrades.", src: "Diaz 396" }]
-  },
-  {
-    name: "Juan Jaramillo", roles: ["Brig commander"], loyalty: "", sources: ["Diaz 86","Ixtlil 307"],
-    events: [
-      { text: "Married Malintzin after the conquest.", src: "Diaz 86" },
-      { text: "From Salvatierra.", src: "Ixtlil 307" },
-      { text: "Commanded foot soldiers on Noche Triste.", src: "Gom 220" },
-      { text: "Commanded brig in Siege of Tenochtitlan.", src: "Ixtlil 307" },
-      { text: "Rescued a captured brig in Siege of Tenochtitlan.", src: "Diaz 382" },
-    ]
-  },
-  {
-    name: "Juan de Limpias*", roles: ["Brig captain"], loyalty: "", sources: ["Diaz 382"],
-    events: [{ text: "Captain of brig captured by Mexica; later rescued.", src: "Diaz 382" }]
-  },
-  {
-    name: "Juan de Najera", roles: [], loyalty: "", sources: ["Diaz p. 54"],
-    events: [{ text: "Joined in Havana. Brother to Martínez del Fregenal.", src: "Diaz p. 54" }]
-  },
-  {
-    name: "Juan Perez de Artiaga", roles: ["Settler"], loyalty: "", sources: ["Diaz 172"],
-    events: [{ text: "Settler at Puebla who spent time with Marina and Aguilar and gained the nickname 'Malinche' like Cortés.", src: "Diaz 172" }]
-  },
-  {
-    name: "Juan del Rio", roles: ["Messenger"], loyalty: "", sources: ["Gom 202"],
-    events: [{ text: "Went to Cempoala with Cortés to fight Narváez. Sent as messenger and held captive; forced to watch Narváez's men march around.", src: "Gom 202" }]
-  },
-  {
-    name: "Juan Ruano", roles: [], loyalty: "Velázquez loyalist", sources: ["Diaz p. 48"],
-    events: []
-  },
-  {
-    name: "Juan de Salamanca", roles: [], loyalty: "", sources: ["Diaz 304"],
-    events: [{ text: "Fought bravely at Battle of Otumba.", src: "Diaz 304" }]
-  },
-  {
-    name: "Juan de Sedeño", roles: ["Ships captain"], loyalty: "", sources: [],
-    events: [{ text: "Passing ships captain intercepted at Trinidad. Joined the expedition." }]
-  },
-  {
-    name: "Juan de Torres of Cordoba", roles: ["Carpenter"], loyalty: "", sources: [],
-    events: [{ text: "Ordered to stay at the temple in Cempoala to ensure the new altar to Mary was kept clean with flowers.", src: "Diaz 124" }]
-  },
-  {
-    name: "Juan Velazquez de Leon, Capt.", roles: ["Captain"], loyalty: "Diego loyalist", sources: ["Diaz"],
-    events: [
-      { text: "Appointed Captain of 1 of 11 ships in Cuba. Kin to Diego Velázquez." },
-      { text: "His ship was lost in a storm from Cozumel to Río Grijalva.", src: "Diaz p. 66" },
-      { text: "Arrested after founding of Vera Cruz." },
-      { text: "Given daughter of Mase Escasil in Tlaxcala, Doña Elvira.", src: "Diaz 178" },
-      { text: "Selected to visit Moctezuma on Day 2.", src: "Diaz p. 221" },
-      { text: "Told about the secret treasure in Axacayatl's palace and went to Cortés.", src: "Diaz 243" },
-      { text: "Confronted Cortés about seizing Moctezuma. During debate interrupted: 'What is the use of all these words??'", src: "Diaz 243, 245" },
-      { text: "Went to fight Narváez; brought message to him and was held captive.", src: "Gom 202" },
-      { text: "Went on hunting trip with Moctezuma on two sloops, with 200 soldiers.", src: "Diaz 257" },
-      { text: "Sent with 150 men to Coatzacalco to found a city at the mouth of the river.", src: "Cort 119" },
-      { text: "Killed along the causeway on Noche Triste.", src: "Diaz 300" },
-    ]
-  },
-  {
-    name: "Juan Yuste*", roles: ["Captain"], loyalty: "Narváez", sources: [],
-    events: [{ text: "Narváez captain. A wall was found that said he was kept prisoner in the place, written in charcoal.", src: "Cort 169" }]
-  },
-  {
-    name: "Jeronimo Ruiz de la M?", roles: ["Brig commander"], loyalty: "", sources: ["Ixtlil 307"],
-    events: [{ text: "Commanded brig in Siege of Tenochtitlan.", src: "Ixtlil 307" }]
-  },
-  {
-    name: "Lencero*", roles: ["Sailor"], loyalty: "Narváez crew", sources: ["Diaz 308"],
-    events: [{ text: "One of a group of sailors from the Narváez crew, all thin and sickly and the butt of jokes at camp.", src: "Diaz 308" }]
-  },
-  {
-    name: "Lerma*", roles: ["Soldier"], loyalty: "", sources: ["Diaz 380"],
-    events: [{ text: "Saved Cortés during a causeway battle in the Siege of Tenochtitlan.", src: "Diaz 380" }]
-  },
-  {
-    name: "Lezcano", roles: ["Soldier"], loyalty: "", sources: ["Diaz 288"],
-    events: [{ text: "A 'good soldier' killed in Tenochtitlan.", src: "Diaz 288" }]
-  },
-  {
-    name: "Lares 'the Good Rider'", roles: ["Horseman"], loyalty: "", sources: ["Diaz 301"],
-    events: [
-      { text: "Joined in Trinidad.", src: "Diaz p. 50" },
-      { text: "Listed by Díaz as lost in Noche Triste.", src: "Diaz 301" },
-    ]
-  },
-  {
-    name: "Luis Marin*", roles: ["Captain"], loyalty: "", sources: ["Diaz 358"],
-    events: [{ text: "Captain dispatched to calm tensions between captains on the final Siege of Tenochtitlan.", src: "Diaz 358" }]
-  },
-  {
-    name: "Luis de Zaragoza", roles: ["Soldier"], loyalty: "", sources: [],
-    events: [{ text: "Shouted between ships when Escalante's boat was sinking in Cozumel.", src: "Diaz p. 63" }]
-  },
-  {
-    name: "Maria de Estrada", roles: ["Soldier"], loyalty: "", sources: ["Diaz 302"],
-    events: [
-      { text: "'The only Spanish woman in Mexico.'", src: "Diaz 302" },
-      { text: "Wikipedia states she was married to Cortés's soldier Pedro Farfan / Pedro Sánchez Farfan." },
-    ]
-  },
-  {
-    name: "Martin de Gamboa*", roles: [], loyalty: "", sources: ["Ixtlil 283"],
-    events: [{ text: "Horse killed on route out of Tenochtitlan to Tlaxcala. First mention is after Narváez.", src: "Ixtlil 283" }]
-  },
-  {
-    name: "Martin Lopez", roles: ["Boat builder"], loyalty: "", sources: ["Diaz 255"],
-    events: [
-      { text: "Built two sloops in Tenochtitlan for Moctezuma.", src: "Diaz 255" },
-      { text: "Built 13 sloops that helped lay siege to Tenochtitlan.", src: "Diaz 255" },
-      { text: "Sent to Villa Rica to build 3 ships to return to Spain with Moctezuma.", src: "Diaz 279" },
-    ]
-  },
-  {
-    name: "Martin Ramos", roles: [], loyalty: "Basque", sources: ["Diaz p. 59"],
-    events: [
-      { text: "Basque. Was asked with Díaz by Cortés about stories they heard of Spanish in Mexico.", src: "Diaz p. 59" },
-      { text: "Note: possibly same as Martín Ramos de Lares." },
-    ]
-  },
-  {
-    name: "Martin Ramos de Lares", roles: [], loyalty: "Diego loyalist", sources: ["Diaz p. 48"],
-    events: []
-  },
-  {
-    name: "Martinez del Fregenal", roles: [], loyalty: "", sources: ["Diaz p. 54"],
-    events: [{ text: "Joined in Havana. Brother of Juan de Nájera.", src: "Diaz p. 54" }]
-  },
-  {
-    name: "Miguel de Zaragoza", roles: [], loyalty: "", sources: [],
-    events: [{ text: "Stayed behind from Grijalva journey; came out when Cortés arrived. Was living with Totonacs.", src: "Thomas 212" }]
-  },
-  {
-    name: "Mesa 'The Gunner'", roles: ["Artilleryman"], loyalty: "", sources: ["Diaz p. 55"],
-    events: [
-      { text: "Ordered to clean guns and check ammo before battles of Potonchan/Cintla." },
-      { text: "Went on hunting trip with Moctezuma on two sloops, with 200 soldiers.", src: "Diaz 257" },
-    ]
-  },
-  {
-    name: "Ochoa (Basque)", roles: ["Alguacil"], loyalty: "Basque", sources: ["Diaz 102"],
-    events: [{ text: "Appointed Alguaciles (storekeeper) of Vera Cruz.", src: "Diaz 102" }]
-  },
-  {
-    name: "Olea / Cristobal de Olea*", roles: ["Soldier"], loyalty: "", sources: ["Diaz 380"],
-    events: [
-      { text: "Saved Cortés from warriors in the 2nd Siege of Tenochtitlan.", src: "Aguilar 8th, Diaz 380" },
-      { text: "Later died in battle defending Cortés." },
-    ]
-  },
-  {
-    name: "Orduña*", roles: [], loyalty: "", sources: [],
-    events: []
-  },
-  {
-    name: "Orteguilla", roles: ["Page"], loyalty: "", sources: ["Diaz p. 231"],
-    events: [
-      { text: "Cortés's page." },
-      { text: "Sent to ask Moctezuma for a tour of Tlatelolco.", src: "Diaz 131" },
-      { text: "Spoke Nahuatl and was requested by Moctezuma as an attendant during captivity.", src: "Diaz 250" },
-      { text: "Used as a spy in service to Moctezuma.", src: "Diaz 250" },
-    ]
-  },
-  {
-    name: "Ortiz the Musician", roles: ["Musician"], loyalty: "", sources: [],
-    events: [
-      { text: "Joined in Trinidad. Sold his co-owned horse El Arriero to Cortés." },
-    ]
-  },
-  {
-    name: "Pacheco", roles: [], loyalty: "", sources: ["Diaz p. 54"],
-    events: [{ text: "Joined in Havana.", src: "Diaz p. 54" }]
-  },
-  {
-    name: "Pedro de Alvarado, Capt.", roles: ["Captain"], loyalty: "GRIJ", sources: ["Diaz 27"],
-    events: [
-      { text: "One of four captains on Grijalva expedition.", src: "Diaz 27" },
-      { text: "Returned from Grijalba expedition with word of gold and riches." },
-      { text: "Joined in Trinidad with his brothers. In Cuba, led men overland to Havana." },
-      { text: "Chosen as Commander of Expeditions in Vera Cruz.", src: "Diaz 102" },
-      { text: "Led 100 men inland from Vera Cruz; visited villages where sacrifices were found.", src: "Diaz 104–05" },
-      { text: "Given daughter of Xicotencatl in Tlaxcala, Doña Luisa.", src: "Diaz 178" },
-      { text: "Sent to Tenochtitlan but turned back; described by Mexica as handsome, given the name Tonatio (Son of the Sun).", src: "Diaz 187" },
-      { text: "Selected to visit Moctezuma on Day 2 in Tenochtitlan.", src: "Diaz p. 221" },
-      { text: "Confronted Cortés about seizing Moctezuma; went to seize him in his quarters.", src: "Diaz 243, 245" },
-      { text: "Went to the Temple with Moctezuma and 150 soldiers to prevent sacrifices.", src: "Diaz 256" },
-      { text: "Went on hunting trip with Moctezuma on two sloops, with 200 soldiers.", src: "Diaz 257" },
-      { text: "Horse: sorrel mare, well trained. Brothers: Jorge, Gonzalo, Gomez, Juan de Alvarado." },
-    ]
-  },
-  {
-    name: "Pedro de Guzman 'the Bowman'", roles: ["Crossbowman"], loyalty: "", sources: ["Diaz p. 59"],
-    events: [{ text: "Crossbowman put in charge of crossbow repair with Juan Benitez in Cozumel.", src: "Diaz p. 59" }]
-  },
-  {
-    name: "Pedro de Ircio / Dircio", roles: ["Captain"], loyalty: "", sources: ["Gom 91"],
-    events: [
-      { text: "Appointed Captain of Vera Cruz when Cortés left for Mexico; left with 2 horses and 2 arquebuses.", src: "Gom 91" },
-      { text: "Sent a letter to Cortés about an attack that killed nine Spanish.", src: "Gom 169" },
-      { text: "Attacked Tlayacapan in the Chalco campaign in 1521.", src: "Cort 175" },
-    ]
-  },
-  {
-    name: "Pedro / Juan Escudero", roles: [], loyalty: "Diego loyalist", sources: ["Cortés 87","Diaz 129"],
-    events: [
-      { text: "Named by Cortés in letter 2 as one of four traitors who tried to steal ship.", src: "Cortés 87, Aguilar Ch 3" },
-      { text: "Arrested after founding of Vera Cruz; sentenced to death for trying to sail to Cuba.", src: "Diaz 129, Aguilar Ch 3" },
-      { text: "Gómara and Aguilar say he was executed; Díaz agrees.", src: "Diaz 265" },
-    ]
-  },
-  {
-    name: "Pedro Hernandez", roles: ["Secretary"], loyalty: "", sources: ["Diaz 265"],
-    events: [
-      { text: "Cortés's secretary." },
-      { text: "Was present when Moctezuma swore fealty to Spain.", src: "Diaz 265" },
-    ]
-  },
-  {
-    name: "Pedro Lopez", roles: ["Crossbowman", "Soldier"], loyalty: "", sources: ["Diaz 253"],
-    events: [
-      { text: "A great crossbowman.", src: "Diaz 253" },
-      { text: "Snapped while guarding Moctezuma — 'To hell with this dog' — and was flogged for it.", src: "Diaz 253" },
-    ]
-  },
-  {
-    name: "Pedro Melgarejo*", roles: ["Friar"], loyalty: "", sources: ["Diaz 358"],
-    events: [{ text: "Friar dispatched by Cortés to join his southern units and calm tensions between captains.", src: "Diaz 358" }]
-  },
-  {
-    name: "Pedro Moreno Medrano*", roles: ["Gunner"], loyalty: "", sources: ["Diaz 382"],
-    events: [{ text: "Gunner who held the causeway during Siege of Tenochtitlan.", src: "Diaz 382, 390" }]
-  },
-  {
-    name: "Pedro de Moron", roles: ["Horseman"], loyalty: "", sources: ["Diaz p. 145"],
-    events: [
-      { text: "Fought off an attack, severely wounded and horse killed.", src: "Diaz p. 145" },
-      { text: "Died of wounds from the Tlaxcala army.", src: "Diaz 146" },
-    ]
-  },
-  {
-    name: "Pedro Sanchez Farfan", roles: [], loyalty: "", sources: ["Diaz p. 50"],
-    events: [
-      { text: "Joined in Trinidad.", src: "Diaz p. 50" },
-      { text: "Wikipedia states he was the husband of the 'female conquistador' María de Estrada." },
-    ]
-  },
-  {
-    name: "Pedro de la Vega", roles: [], loyalty: "", sources: ["Diaz p. 52"],
-    events: [{ text: "One of Velázquez's messengers sent to Trinidad to stop Cortés. He joined the expedition there.", src: "Diaz p. 52" }]
-  },
-  {
-    name: "Pedro Valenciano", roles: [], loyalty: "", sources: ["Diaz 274"],
-    events: [{ text: "Made cards for gambling.", src: "Diaz 274" }]
-  },
-  {
-    name: "Pedro Xuarez Gallinato de Porra", roles: [], loyalty: "", sources: [],
-    events: [{ text: "Sent to Jamaica right out of port to get supplies. From Seville." }]
-  },
-  {
-    name: "Pizarro, Capt.", roles: ["Captain"], loyalty: "", sources: ["Diaz 265"],
-    events: [
-      { text: "Sent to examine mines on the north coast with four soldiers, four Mexican chiefs, and 40 days.", src: "Diaz 265" },
-      { text: "Said to be 250 miles away. Returned with 1,000+ pesos of gold dust.", src: "Diaz 268" },
-    ]
-  },
-  {
-    name: "De Portillo, Capt.", roles: ["Captain", "Brig commander"], loyalty: "", sources: ["Diaz 369"],
-    events: [
-      { text: "Fought in Italy." },
-      { text: "Killed commanding his brig in Siege of Tenochtitlan.", src: "Diaz 369" },
-    ]
-  },
-  {
-    name: "R?..jon De Lovera*", roles: ["Brig commander"], loyalty: "", sources: ["Ixtlil 307"],
-    events: [
-      { text: "From Medina del Campo. First name lost.", src: "Ixtlil 307" },
-      { text: "Commanded brig in Siege of Tenochtitlan.", src: "Ixtlil 307" },
-    ]
-  },
-  {
-    name: "Rodrigo de Castaneda", roles: [], loyalty: "", sources: ["Flor 211"],
-    events: [{ text: "Attacked and pushed into water during siege but escaped.", src: "Flor 211" }]
-  },
-  {
-    name: "Rodrigo Rengel / Rangel", roles: ["Chamberlain", "Brig commander"], loyalty: "", sources: [],
-    events: [
-      { text: "Joined from Santispiritus, Cuba." },
-      { text: "Chosen as Chamberlain in Havana." },
-      { text: "Was in charge of Narváez and his prisoners in Villa Rica.", src: "Diaz 283" },
-      { text: "Led a brigantine on Siege of Tenochtitlan.", src: "Ixtlil 307" },
-    ]
-  },
-  {
-    name: "Rodriguez de Villafuerte* / Juan Rodriguez de Villafuerte", roles: ["Captain", "Flagship brig captain"], loyalty: "", sources: ["Ixtlil 307"],
-    events: [
-      { text: "From Medellín, Spain." },
-      { text: "Attacked Tlayacapan in the Chalco campaign in 1521.", src: "Cort 175" },
-      { text: "Captain of flagship brigantine for Siege of Tenochtitlan.", src: "Ixtlil 307" },
-    ]
-  },
-  {
-    name: "Rojas", roles: [], loyalty: "", sources: ["Diaz p. 54"],
-    events: [{ text: "Joined in Havana.", src: "Diaz p. 54" }]
-  },
-  {
-    name: "Rojas 'the Rich'", roles: [], loyalty: "", sources: ["Diaz p. 54"],
-    events: [{ text: "Mentioned on Díaz p. 54." }]
-  },
-  {
-    name: "Ruy Gonzalez*", roles: ["Captain"], loyalty: "", sources: ["Ixtlil 307"],
-    events: [{ text: "Lower captain on Siege of Tenochtitlan.", src: "Ixtlil 307" }]
-  },
-  {
-    name: "Santa Clara", roles: [], loyalty: "", sources: ["Diaz p. 54"],
-    events: [{ text: "Joined in Havana.", src: "Diaz p. 54" }]
-  },
-  {
-    name: "Sebastian Rodriguez", roles: [], loyalty: "", sources: ["Diaz p. 54"],
-    events: [{ text: "Joined in Havana.", src: "Diaz p. 54" }]
-  },
-  {
-    name: "Trujillo", roles: ["Sailor"], loyalty: "", sources: ["Diaz 253"],
-    events: [
-      { text: "Appears to have broken wind in front of Moctezuma, who took great offense. The next day Moctezuma gave him gold and asked him not to do it again. That night he did it again and was removed from duty.", src: "Diaz 253" },
-    ]
-  },
-  {
-    name: "Valdelamar", roles: [], loyalty: "", sources: ["Aguilar Ch 6"],
-    events: [{ text: "Went back to check on the Nautla incident with Aguilar and De Tapia.", src: "Aguilar Ch 6" }]
-  },
-  {
-    name: "Vasco Porcallo*", roles: ["Brig commander"], loyalty: "", sources: ["Ixtlil 307"],
-    events: [{ text: "Led a brigantine on Siege of Tenochtitlan.", src: "Ixtlil 307" }]
-  },
+var MISC = [
+  {name:"2 Italians*", note:"Apparently healers. Helped cure some people, including Aguilar.", src:"Aguilar Entry Six"},
+  {name:"15 Crossbowmen & Musketmen", note:"Sent to explore inland Yucatan; not clear if 30 or 15 mixed units.", src:"Diaz 72"},
+  {name:"15 Sailors", note:"Sent back to Spain with first gold.", src:""},
+  {name:"200 Islanders from Cuba", note:"Bearers and servants.", src:"Gom p. 23, 55"},
+  {name:"200 Soldiers (marched to Mexico)", note:"Gómara says 150.", src:""},
+  {name:'"Several Negroes"', note:"Tadeo, Roberto (unconfirmed). Possibly included the Black man blamed for bringing Smallpox — said to be with Narváez group.", src:"Gom p. 23"},
+  {name:"Woman Soldier", note:"Led a battle after the Fall of Tenochtitlan, earning lands. Married to Martín Partidor. Possibly María de Estrada.", src:"Dur 561"},
+  {name:'"The Men of the Rock"', note:"Sailors from Gibraltar, Diego loyalists who plotted to steal a boat and leave for Cuba. Received 200 lashes each. 7 also flogged for stealing pork from Berrio.", src:"Diaz 129, 61"},
+  {name:'"The Martyr" — Young Sevillian Man*', note:"Captured in Tenochtitlan and made to shoot at the Spanish. Shot weakly and hit no one. Killed when the Mexica realized what he was doing.", src:"Dur 554"}
 ];
 
-// ── Render ──────────────────────────────────────────────────────────
-let allLetters = [];
+var PEOPLE = [];
 
-function getLetterGroups(filtered) {
-  const groups = {};
-  filtered.forEach(p => {
-    const letter = p.name[0].toUpperCase();
-    if (!groups[letter]) groups[letter] = [];
-    groups[letter].push(p);
-  });
-  return groups;
+function p(name, roles, loyalty, sources, events) {
+  PEOPLE.push({name:name, roles:roles, loyalty:loyalty, sources:sources, events:events});
 }
+function e(text, src) { return {text:text, src:src||""}; }
 
-function renderBadges(p) {
-  let html = '';
-  if (p.loyalty && p.loyalty.includes('Narváez')) html += `<span class="badge badge-narvaez">Narváez</span>`;
-  if (p.loyalty && p.loyalty.includes('Diego loyalist')) html += `<span class="badge badge-diego">Diego loyalist</span>`;
-  p.roles.forEach(r => html += `<span class="badge badge-role">${r}</span>`);
-  p.sources.forEach(s => html += `<span class="badge badge-source">${s}</span>`);
+p("Aldrete*",["King's Treasurer"],"",["Aguilar 8"],[e("King's first treasurer.","Aguilar 8")]);
+p("Alonzo de Avila",["Captain"],"GRIJ",["Diaz 27"],[e("One of four captains on Grijalva expedition.","Diaz 27"),e("Joined Cortés in Trinidad. Funded one of the Cortés ships."),e("Appointed Captain of 1 of 11 ships in Cuba."),e("Appointed Accountant of Vera Cruz.","Diaz 102"),e("Described as ill-tempered as captain of the Quiahuitzlan Expedition.","Diaz 109"),e("Given wife in Tlaxcala.","Diaz 178"),e("Went to seize Moctezuma in his quarters.","Diaz 245"),e("Went to the Temple with Moctezuma and 150 soldiers to prevent sacrifices — Moctezuma sacrificed men and boys anyway.","Diaz 256"),e("Went on hunting trip with Moctezuma on two sloops, with 200 soldiers.","Diaz 257"),e("Oversaw minting of Aztec gold after Moctezuma agreed to hand it over.","Diaz 272")]);
+p("Alonso de Grado",[],"",[],[e("Put in charge of Villa Rica by Cortés after Escalante was killed; later relieved and briefly imprisoned by Cortés.","Diaz 251"),e("Was opposed to the march to Mexico and was a chief agitator.","Diaz 251")]);
+p("Alonso Hernandez Puertocarrero, Capt.",["Captain"],"GRIJ",["Diaz 50","Gom 88"],[e("Joined from Santispiritus, Cuba."),e("Cortés bought him a gray mare in Trinidad.","Diaz p. 50"),e("Funded one of the Cortés ships. Appointed Captain of 1 of 11 ships in Cuba."),e("Given Malintzin as a wife after Battle of Cintla.","Diaz 83"),e("Named alcayde of Vera Cruz. Was given a wife by Cuesco."),e("Declared Proctor and sent back to Spain with first gold.","Gom 88"),e("Helped fit out the Grijalba expedition.")]);
+p("Alonso Penate",[],["Diego loyalist"],["Cortés p. 87"],[e("Named by Cortés in letter 2 as one of four traitors who tried to steal a ship.","Cortés p. 87")]);
+p("Alonso Rodriguez",["Mine owner"],"",["Diaz p. 50"],[e("Owned gold mines (in Cuba?). Joined in Trinidad.","Diaz p. 50")]);
+p("Alonso Romero",["Alguacil"],"",["Diaz 102"],[e("Appointed Alguaciles (storekeeper) of Vera Cruz.","Diaz 102")]);
+p("Alonso Yañez",["Carpenter"],"",["Diaz p. 62"],[e("Built altar and cross in Cozumel after knocking down idols."),e("Built large wooden cross at Cintla.","Diaz 81"),e("Discovered secret chamber full of gold and treasure in Axacayatl's palace.","Diaz 241")]);
+p("Alvaro Lopez",["Carpenter"],"",["Diaz p. 62"],[e("Built altar and cross in Cozumel after knocking down idols."),e("Built large wooden cross at Cintla.","Diaz 81")]);
+p("Andres de Duero*",[],"Narváez",["Diaz 308"],[e("Leader in Narváez's army who defied Cortés but gave in and marched to Tepeaca.","Diaz 308")]);
+p("Andres de Monjaraz*",[],"",[],[e("Attacked Tlayacapan in the Chalco campaign in 1521.","Cort 175")]);
+p("Andres de Tapia",["Author"],"",["Gom 31"],[e("First to spot Aguilar, the Spanish slave.","Gom 31, Diaz p. 63"),e("Wrote his own version of events."),e("Returned to Villa Rica with Aguilar and Valdelamar to check on Nauhtla incident.","Aguilar Ch 5"),e("Sent up the Templo Mayor, triggering removal of idols and significant tension.","De Tapia"),e("Settled a dispute between Cholula and Tlaxcala; returned in time to hear about Narváez's arrival.","De Tapia"),e("Later described the skull rack to Gómara.","Gom 167")]);
+p("Andres Nuñez",["Boat builder"],"",["Diaz 255"],[e("Appears to have been kidnapped from Garay expedition.","Diaz 133"),e("Built the two sloops in Tenochtitlan for Moctezuma.","Diaz 255"),e("Sent to Villa Rica to build 3 ships to return to Spain with Moctezuma.","Diaz 279")]);
+p("Angulo",[],"",[],[e("Joined in Havana.")]);
+p("Anton de Alaminos",["Pilot"],"CORD, GRIJ",["Gom 88"],[e("Native of Palos; sailed with Ponce de León, Francisco de Córdoba, and Grijalva."),e("Senior ship pilot, sent back to Spain with first shipment of gold.","Gom 88, Diaz 126"),e("Piloted one of two ships on 10-day mission up the coast where Montejo spotted Quiahuitzlan.")]);
+p("Anton del Rio",["Messenger"],"",["Aguilar 7"],[e("Messenger sent from Tenochtitlan by Cortés; saw the Mexica taking down bridges and deepening canals.","Aguilar 7th Entry")]);
+p("Antonio de Arriaga*",["Captain"],"",["Ixtlil 307"],[e("Lower captain on Siege of Tenochtitlan.","Ixtlil 307")]);
+p("Antonio de Carvajal*",["Brig commander"],"",["Ixtlil 307"],[e("From Zamora.","Ixtlil 307"),e("Commanded brig in Siege of Tenochtitlan.","Ixtlil 307")]);
+p("Antonio de Quiñones*",[],"",[],[e("Commanded the lead column on Noche Triste.","Gom 220")]);
+p("Antonio de Villafana*",[],"",[],[e("Led conspiracy against Cortés after Noche Triste.","Diaz 350")]);
+p("Antonio de Villaroel",["Standard bearer"],"",[""],[]); 
+p("Arbenga",["Gunner"],"Levantine",["Diaz p. 55"],[e("Ordered to clean guns and check ammo before battles of Potonchan/Cintla.","Diaz 59"),e("Went on hunting trip with Moctezuma on two sloops, with 200 soldiers.","Diaz 257")]);
+p("Baena",[],"",[],[e("Joined in Trinidad.","Diaz p. 50")]);
+p("Barrientos",["Soldier"],"",["Diaz 269"],[e("Went with Pizarro to the mines in Tuxtepec; left there to farm cocoa and cotton.","Diaz 269"),e("See also Hernando de Barrientos — possibly same person.")]);
+p("Bartolome de Usagre",["Gunner"],"",["Diaz p. 55"],[e("Ordered to clean guns and check ammo before battles of Potonchan/Cintla.","Diaz 59")]);
+p("Bartolome de Olmedo",["Friar"],"",["Diaz 128"],[e("Received a tipping letter from his friar brother about Velázquez's plan."),e("Held mass in Cempoala after toppling idols; baptized 8 girls.","Diaz 128"),e("In Xico, discouraged Cortés from pushing the Faith too hard or too early."),e("Again advocated in Cholula and Tlaxcala that it was too early to push the Faith.","Diaz 176"),e("Atop Tlatelolco Pyramid, advised Cortés not to pressure Moctezuma about building a church.","Diaz 235"),e("Went to the Temple with Moctezuma and 150 soldiers to prevent sacrifices.","Diaz 256"),e("Sent to the coast to present Narváez with a letter; ran into Cortés en route carrying a letter from Narváez.","Cort 121")]);
+p("Bartolome Garcia",["Miner"],"",["Diaz p. 50"],[e("Joined in Trinidad. Sold his co-owned horse El Arriero to Cortés.")]);
+p("Bernal Diaz",["Author","Soldier"],"CORD",["Diaz"],[e("Author of True History of the Conquest of New Spain."),e("Marched overland to Havana."),e("Selected to visit Moctezuma on Day 2 in Tenochtitlan.","Diaz p. 221"),e("Was part of the group who convinced Cortés to seize Moctezuma.","Diaz 243"),e("Was given a girl and gold by Moctezuma.","Diaz 254"),e("Went to Cempoala to fight Narváez.","Diaz 283"),e("In the Siege of Tenochtitlan, fought with Alvarado.","Diaz 362")]);
+p("Bernardino Vazquez de Tapia",["Horseman","Author"],"GRIJ",["Bernardino"],[e("Wrote his own account of the conquest."),e("Came to Cuba in 1513. Says he is one of 13 horsemen.","Bernardino"),e("Sent to Tenochtitlan as a messenger but turned around due to illness or Moctezuma's orders.","Diaz p. 186"),e("Stayed in Tenochtitlan when Cortés went after Narváez; says they were brutally attacked.","Bernardino")]);
+p("Bernardino de Coria",[],["Diego loyalist (turned)"],["Diaz 129"],[e("Was part of plot to steal a boat and sail to Cuba, but flipped and told all to Cortés.","Diaz 129")]);
+p("Berrio",["Soldier"],"",[""],[ e("Victim of pork theft by the Men of the Rock, who were subsequently flogged.")]);
+p("Botello (Puerto de Plata)",["Seer"],"",["Diaz 297"],[e("Came to tell Cortés that Pedro de Alvarado was in trouble in Mexico.","Aguilar Ch 6"),e("Díaz describes him as a sorcerer; he prophesied they must leave that night (Noche Triste) or all die.","Diaz 297")]);
+p("De Briones",["Brig commander"],"",["Ixtlil 307"],[e("From Salamanca. First name lost."),e("Commanded brig in Siege of Tenochtitlan.","Ixtlil 307")]);
+p("Camacho",["Pilot"],"",["Diaz p. 57"],[e("Pilot of Bernal Díaz's boat.","Diaz p. 57")]);
+p("Castaneda / Castaneda Xicotencatl",[],"",[],[e("Led an attack during the second siege of Tenochtitlan.","Flor 210")]);
+p("Cervantes",["Jester"],"",["Diaz 269"],[e("Went with Pizarro to the mines in Tuxtepec; left there to farm cocoa and cotton.","Diaz 269")]);
+p("Corral",["Ensign","Standard bearer"],"",["Diaz 102"],[e("Chosen as standard bearer in Vera Cruz.","Diaz 102"),e("(Cristóbal Corral?) Attacked Tlayacapan in the Chalco campaign in 1521.","Cort 175")]);
+p("Cristobal de Guzman",["Steward"],"",["Diaz p. 55"],[e("Cortés's steward who later took Cuahtemoc prisoner."),e("Brought the treasure out on Noche Triste for soldiers to carry.","Diaz 298"),e("Captured in Siege of Tenochtitlan; taken to Cuauhtemoc.")]);
+p("Cristobal de Olid, the Valiant, Capt.",["Captain","Quartermaster"],"",["Diaz p. 50"],[e("From Baeza. Joined in Trinidad."),e("Appointed Captain of 1 of 11 ships in Cuba."),e("Sailed a caravel to Yucatan looking for Grijalba, failed and returned.","Gom 18"),e("Appointed Quartermaster of Vera Cruz.","Diaz 102"),e("His horse was killed in battle against Otomies/Tlaxcallans.","Aguilar Ch 3"),e("Given wife in Tlaxcala.","Diaz 178"),e("Went on hunting trip with Moctezuma on two sloops, 200 soldiers.","Diaz 257"),e("Fought bravely at Battle of Otumba.","Diaz 304"),e("Led battalion to Tlacopan then Chapultepec to open the Siege of Tenochtitlan."),e("Helped save Cortés in Siege of Tenochtitlan.","Diaz 380")]);
+p("De Mora",[],"",[],[e("From Ciudad Rodrigo. Took poultry in front of Cortés and was punished in Xico.")]);
+p("Diego de Godoy",["Royal Notary"],"",[""],[]); 
+p("Diego de Ordaz, Capt.",["Captain"],"Diego loyalist / GRIJ",["Diaz"],[e("Sent by Velázquez to keep an eye on Cortés."),e("Talked the mayor of Trinidad into silence on behalf of Cortés.","Diaz p. 52"),e("Took a caravel from Trinidad to intercept the Sedeño ship.","Gom p. 22"),e("Was one of the plotters who tried to steal the caravel; tried to trap Cortés.","Aguilar Ch 3"),e("Sent to Cape Catoche to wait for Spaniards living in Mexico."),e("Funded one of the Cortés ships. Appointed Captain of 1 of 11 ships in Cuba."),e("Battle of Cintla: appointed command of infantry and ranged units."),e("Arrested after founding of Vera Cruz; sentenced to hang but did not.","Aguilar Ch 3"),e("Climbed Popocatepetl."),e("Selected to visit Moctezuma on Day 2 in Tenochtitlan.","Diaz p. 221"),e("Confronted Cortés about seizing Moctezuma.","Diaz 243"),e("Volunteered to investigate Coatzicoalco River; reprimanded captains for robbing locals.","Diaz 266"),e("Led 400 soldiers out of the palace fort in Tenochtitlan; immediately attacked and wounded.","Diaz 288"),e("Chosen to lead the fighting men on Noche Triste.","Diaz 297")]);
+p("Diego de Pineda(o)",[],"",[],[e("Joined in Trinidad.")]);
+p("Diego de Soto of Toro",[],"",[],[e("Joined in Havana.")]);
+p("Escalona (Younger)",["Soldier"],"",["Diaz 269"],[e("Went with Pizarro to the mines in Tuxtepec; left there to farm cocoa and cotton.","Diaz 269")]);
+p("Escobar the Page, Capt.",["Captain"],"Diego loyalist",["Diaz 105"],[e("Appointed Captain of 1 of 11 ships in Cuba."),e("Sent to explore Boca de Terminos near Campeche. Found the greyhound left by Grijalva.","Diaz p. 67"),e("Arrested after founding of Vera Cruz.","Diaz 105")]);
+p("Francisco (translator)",["Translator"],"",["Diaz 82"],[e("Native translator captured on Grijalva expedition. Did not speak Tabascan but could speak Culua.","Diaz 82"),e("May be the second translator named alongside Melchior/Julian.")]);
+p("Francisco de Aguilar",["Author","Soldier"],"",["Aguilar"],[e("Author of A Short Account of the Conquest of New Spain."),e("Sent to ask Moctezuma to grant a tour of Tlatelolco to Cortés.","Diaz 231"),e("Went back to Villa Rica to get the Nauhtla chief, with De Tapia and Valdelamar.","Aguilar Ch 5"),e("Went to Cempoala with Cortés to fight Narváez.","Aguilar Ch 6"),e("Was in charge of watching Moctezuma for a time.","Aguilar Ch 6")]);
+p("Francisco Fernandez",["Royal Notary"],"",["Gom 66"],[e("Royal Notary.","Gom 66")]);
+p("Francisco de Lugo, Capt.",["Captain"],"",["Diaz 243"],[e("Went ashore at Campeche. Relative of Bernal Díaz. Owner of a greyhound.","Diaz p. 66"),e("Told about the secret treasure in Axacayatl's palace and went to Cortés.","Diaz 243"),e("Went to seize Moctezuma in his quarters.","Diaz 245"),e("Went to the Temple with Moctezuma and 150 soldiers to prevent sacrifices.","Diaz 256"),e("Noche Triste: ordered to lead a battalion of 50 of the best soldiers.","Diaz 297")]);
+p("Francisco de Montejo, Capt.",["Captain"],"GRIJ",["Diaz 27"],[e("One of four captains on Grijalva expedition.","Diaz 27"),e("Joined in Havana. Funded one of the ships."),e("Appointed Captain of 1 of 11 ships in Cuba."),e("Led 10-day mission from Ulua north; spotted Quiahuitzlan from the ship."),e("Declared Proctor and sent back to Spain with first letters/treasures July 16, 1519.","Gom 88"),e("Named alcayde of Vera Cruz with Puertocarrero."),e("Later executed the conquest of Yucatan.")]);
+p("Francisco de Morla",["Ships Captain"],"",["Gom"],[e("On the crossing from Cuba his ship lost its rudder. Cortés dove into the water with a rope to grab it.","Gom p. 26"),e("Listed by Díaz as lost in Noche Triste.","Diaz 301")]);
+p("Francisco de Orozco",["Artillery Captain"],"",[""],[ e("Appointed Captain of Artillery in Cozumel.")]);
+p("Francisco Rodriguez Magarino*",["Brig commander"],"",["Ixtlil 307"],[e("From Mérida.","Ixtlil 307"),e("Commanded brig in Siege of Tenochtitlan.","Ixtlil 307")]);
+p("Francisco de Salceda / Saucedo, Capt.",["Captain"],"",["Diaz 297"],[e("Appointed Captain of 1 of 11 ships in Cuba."),e("Noche Triste: ordered to lead a battalion of 50 of the best soldiers.","Diaz 297"),e("Listed by Díaz as lost in Noche Triste.","Diaz 301")]);
+p("Francisco Verdugo",[],"",[],[e("Attacked Tlayacapan in the Chalco campaign in 1521.","Cort 175")]);
+p("Garcia Holguin / Garci Holguin*, Capt.",["Captain","Brig commander"],"",["Ixtlil 307"],[e("From Cáceres.","Ixtlil 307"),e("Seized Cuauhtemoc.","Aguilar"),e("Commanded brig in Siege of Tenochtitlan.","Ixtlil 307")]);
+p("Garcicaro",[],"",[],[e("Joined in Havana.","Diaz p. 54")]);
+p("Gaspar Sanchez",[],"",[],[e("Nephew of the treasurer of Cuba. Joined in Trinidad.","Diaz p. 50")]);
+p("Gines Nortes",[],"",[],[e("Brought a small ship loaded with supplies.","Diaz p. 58")]);
+p("Gonzalo de Sandoval",["Captain"],"Diego loyalist",["Diaz"],[e("Joined from Santispiritus, Cuba. Would go on to his own fame."),e("Named a second captain.","Aguilar Ch 3"),e("Put in charge of force at Cempoala while Cortés dealt with a Spanish ship.","Diaz 132"),e("Given wife in Tlaxcala.","Diaz 178"),e("Selected to visit Moctezuma on Day 2.","Diaz p. 221"),e("Confronted Cortés about seizing Moctezuma.","Diaz 243"),e("Went to seize Moctezuma in his quarters.","Diaz 245"),e("Sent with 80 men to arrest any of Narváez's men acting as officials.","Cort 125, Gom 203"),e("Chosen to lead the fighting men on Noche Triste.","Diaz 297"),e("Fought bravely at Battle of Otumba.","Diaz 304"),e("Sent to Chalco to expel Mexica forces with Tlaxcalans between sieges.","Ixtlil 292"),e("Led battalion to Itztapalapa to open Siege of Tenochtitlan.")]);
+p("Gonzalo Dominguez",[],"",[],[e("Fought bravely at Battle of Otumba.","Diaz 304")]);
+p("Gonzalo Lopez de Jimena",[],"",[],[e("Joined from Santispiritus, Cuba. Lopez brother also joined.")]);
+p("Gonzalo Mejia",["Treasurer"],"",["Diaz 102"],[e("Joined in Trinidad.","Diaz p. 50"),e("Appointed treasurer at Vera Cruz.","Diaz 102"),e("Oversaw the minting of Aztec gold into weighed bars after Moctezuma handed it over.")]);
+p("Gonzalo de Umbria",["Pilot"],"Diego loyalist",["Cortés 87"],[e("Named by Cortés in letter 2 as one of four traitors who tried to steal ship.","Cortés 87, Aguilar Ch 3"),e("Sentenced to having his feet cut off by Cortés, or whipped — accounts differ.","Diaz 129, Gom 89"),e("Dispatched to mine in Zacatula; given 40 days.","Diaz 265"),e("Returned with 300 pesos gold, two chieftains, jewels, and intelligence.","Diaz 267")]);
+p("Gutierrez",[],"",[],[e("Joined in Havana.","Diaz p. 54")]);
+p("Gutierrez de Badajoz*",[],"",[],[e("Charged the Tlatelolco pyramid but fell down the steps. Shrines were captured and burned.","Diaz 397")]);
+p("Guzman / Hulano Guzman",["Butler","Chamberlain"],"",["Diaz p. 55"],[e("Appointed butler in Havana; died soon after.","Diaz p. 55"),e("Cortés's butler/chamberlain.","Aguilar 8, Gom 219"),e("Captured alive in second siege of Tenochtitlan.","Aguilar 8th")]);
+p("Heredia",["Musketeer"],"Basque",[""],[ e("Old Basque musketeer. Went with Pizarro to Tuxtepec; left there to farm cocoa and cotton.","Diaz 269")]);
+p("Hernan Cortes",["Captain General","Governor"],"",["Gomara","Ixtlil"],[e("Born 1485, Medellín, Spain. Parents: Martín Cortés de Monroy and Doña Catalina Pizarro Altamirano.","Ixtlil 138, Gomara"),e("Before heading to Mexico became very flashy, adorning himself in finery, feathers, and gold."),e("Díaz describes him as diligent in all he did. Gómara notes his cheering encouraged men in battles against Tlaxcala."),e("When horses collapsed early on route to Tzomantzinco, carried on anyway. Said upon returning: Call not a day evil until it has passed."),e("Díaz reports Cortés often consulted with his men on key decisions.","Diaz p. 195")]);
+p("Hernando Alonso de Villanueva El Manquillo",[],"",[],[e("Was wounded by Alonzo de Avila for falling out of formation at Quiahuitzlan.")]);
+p("Hernando de Barrientos",[],"",[],[e("Spaniard who went missing and turned up leading forces from Chinantlan.","Ixtlil 306")]);
+p("Hernando de Lema*",["Brig commander"],"",["Ixtlil 307"],[e("Led a brigantine on Siege of Tenochtitlan.","Ixtlil 307")]);
+p("Jeronimo / Hernando de Aguilar",["Translator","Former Spanish slave"],"",["Gom 31"],[e("Spanish slave of a Cacique; returned to Cortés at Cozumel."),e("Shipwrecked in 1511, sailing from Darien to Santo Domingo. 7 died in the boat, Valdivia and 4 others were sacrificed; he served a sympathetic chief.","Gom 31-32"),e("From Écija.","Gom 31"),e("Went to seize Moctezuma in his quarters.","Diaz 245")]);
+p("Jeronimo Ruiz de la M?",["Brig commander"],"",["Ixtlil 307"],[e("Commanded brig in Siege of Tenochtitlan.","Ixtlil 307")]);
+p("Joan Paez, Capt.",["Captain"],"",["Salazar Ch 2"],[e("Did something in Tlaxcala with his 80 men that angered Cortés, who threatened to hang him and called him a coward. Appears to have been driven from camp.","Sal Ch 2")]);
+p("Juan Alvarez El Manquillo",["Pilot"],"CORD, GRIJ",[""],[]); 
+p("Juan Benitez",["Crossbowman","Repairman"],"",[""],[ e("Crossbowman put in charge of repairs and maintenance at Cozumel. Expert repairman.")]);
+p("Juan de Caceres",["Steward"],"",[""],[ e("Appointed steward in Havana.")]);
+p("Juan Catalan",["Gunner"],"",["Diaz p. 55"],[e("Ordered to clean guns and check ammo before battles of Potonchan/Cintla.","Diaz 59"),e("Was healing people in the Alvarado group during the Siege of Tenochtitlan.","Diaz 365")]);
+p("Juan (Diego) Cermeño",["Pilot"],"Diego loyalist",["Gom","Cort p. 87"],[e("Named by Cortés in letter 2 as one of four traitors who tried to steal ship.","Cortés p. 87"),e("Sentenced to death for his part in the plot.","Diaz 129"),e("Díaz says he was hanged; Gómara agrees it was carried out.","Diaz 265")]);
+p("Juan Cedeño / Sedeño",["Ship owner"],"",["Diaz 146"],[e("From Santispiritus. Considered the richest of the expedition — owned ship, horse, and enslaved person.","Diaz 146"),e("His chestnut mare gave birth on the ship to Mexico.","Diaz p. 55"),e("Owner of horse killed under Morón.","Diaz p. 146")]);
+p("Juan Diaz, Padre",["Padre"],"Diego loyalist",[""],[ e("Delivered mass on Easter in Ulua with Mexica present.","Diaz p. 89"),e("Was part of the scheme to go back to Cuba but escaped punishment as a man of the cloth.","Diaz 129"),e("Said mass in Tlaxcala; urged Cortés not to push religion too hard.","Diaz 175")]);
+p("Juan de Escalante, Capt.",["Captain","High Constable"],"",["Diaz 102"],[e("In departing Cozumel his ship began to sink.","Diaz p. 63"),e("Appointed High Constable in Vera Cruz.","Diaz 102"),e("Cortés ordered him to sink the ships and left him in charge of the settlement."),e("Left in charge of Villa Rica.","Aguilar Ch 3"),e("Wounded in Almeria and died in Villa Rica later.","Diaz 244")]);
+p("Juan Garrido",["African Conquistador"],"",[""],[ e("African conquistador who founded the church of San Hipólito to honor his fallen comrades.","Diaz 396")]);
+p("Juan Jaramillo",["Brig commander"],"",["Diaz 86","Ixtlil 307"],[e("Married Malintzin after the conquest.","Diaz 86"),e("From Salvatierra.","Ixtlil 307"),e("Commanded foot soldiers on Noche Triste.","Gom 220"),e("Commanded brig in Siege of Tenochtitlan.","Ixtlil 307"),e("Rescued a captured brig in Siege of Tenochtitlan.","Diaz 382")]);
+p("Juan de Limpias*",["Brig captain"],"",["Diaz 382"],[e("Captain of brig captured by Mexica; later rescued.","Diaz 382")]);
+p("Juan de Najera",[],"",[],[e("Joined in Havana. Brother to Martínez del Fregenal.","Diaz p. 54")]);
+p("Juan Perez de Artiaga",["Settler"],"",["Diaz 172"],[e("Settler at Puebla who spent time with Marina and Aguilar and gained the nickname Malinche like Cortés.","Diaz 172")]);
+p("Juan del Rio",["Messenger"],"",["Gom 202"],[e("Went to Cempoala with Cortés to fight Narváez. Sent as messenger and held captive; forced to watch Narváez's men march around.","Gom 202")]);
+p("Juan Ruano",[],["Velázquez loyalist"],["Diaz p. 48"],[]); 
+p("Juan de Salamanca",[],"",[],[e("Fought bravely at Battle of Otumba.","Diaz 304")]);
+p("Juan de Sedeño",["Ships captain"],"",[""],[ e("Passing ships captain intercepted at Trinidad. Joined the expedition.")]);
+p("Juan de Torres of Cordoba",["Carpenter"],"",[""],[ e("Ordered to stay at the temple in Cempoala to ensure the new altar to Mary was kept clean with flowers.","Diaz 124")]);
+p("Juan Velazquez de Leon, Capt.",["Captain"],"Diego loyalist",["Diaz"],[e("Appointed Captain of 1 of 11 ships in Cuba. Kin to Diego Velázquez."),e("His ship was lost in a storm from Cozumel to Río Grijalva.","Diaz p. 66"),e("Arrested after founding of Vera Cruz."),e("Given daughter of Mase Escasil in Tlaxcala, Doña Elvira.","Diaz 178"),e("Selected to visit Moctezuma on Day 2.","Diaz p. 221"),e("Told about the secret treasure in Axacayatl's palace and went to Cortés.","Diaz 243"),e("Confronted Cortés about seizing Moctezuma. During debate interrupted: What is the use of all these words??","Diaz 243, 245"),e("Went to fight Narváez; brought message to him and was held captive.","Gom 202"),e("Went on hunting trip with Moctezuma on two sloops, with 200 soldiers.","Diaz 257"),e("Sent with 150 men to Coatzacalco to found a city at the mouth of the river.","Cort 119"),e("Killed along the causeway on Noche Triste.","Diaz 300")]);
+p("Juan Yuste*",["Captain"],"Narváez",[""],[ e("Narváez captain. A wall was found saying he was kept prisoner there, written in charcoal.","Cort 169")]);
+p("Juanes de Fuenterrabia",[],"",[],[e("Joined in Trinidad.","Diaz p. 50")]);
+p("Lares the Good Rider",["Horseman"],"",["Diaz 301"],[e("Joined in Trinidad.","Diaz p. 50"),e("Listed by Díaz as lost in Noche Triste.","Diaz 301")]);
+p("Lencero*",["Sailor"],"Narváez crew",["Diaz 308"],[e("One of a group of sailors from the Narváez crew, all thin and sickly and the butt of jokes at camp.","Diaz 308")]);
+p("Lerma*",["Soldier"],"",["Diaz 380"],[e("Saved Cortés during a causeway battle in the Siege of Tenochtitlan.","Diaz 380")]);
+p("Lezcano",["Soldier"],"",["Diaz 288"],[e("A good soldier killed in Tenochtitlan.","Diaz 288")]);
+p("Luis Marin*",["Captain"],"",["Diaz 358"],[e("Captain dispatched to calm tensions between captains on the final Siege of Tenochtitlan.","Diaz 358")]);
+p("Luis de Zaragoza",["Soldier"],"",[""],[ e("Shouted between ships when Escalante's boat was sinking in Cozumel.","Diaz p. 63")]);
+p("Maria de Estrada",["Soldier"],"",["Diaz 302"],[e("The only Spanish woman in Mexico.","Diaz 302"),e("Wikipedia states she was married to Cortés's soldier Pedro Farfan / Pedro Sánchez Farfan.")]);
+p("Martin de Gamboa*",[],"",[],[e("Horse killed on route out of Tenochtitlan to Tlaxcala. First mention is after Narváez.","Ixtlil 283")]);
+p("Martin Lopez",["Boat builder"],"",["Diaz 255"],[e("Built two sloops in Tenochtitlan for Moctezuma.","Diaz 255"),e("Built 13 sloops that helped lay siege to Tenochtitlan.","Diaz 255"),e("Sent to Villa Rica to build 3 ships to return to Spain with Moctezuma.","Diaz 279")]);
+p("Martin Ramos",[],"Basque",["Diaz p. 59"],[e("Basque. Was asked with Díaz by Cortés about stories they heard of Spanish in Mexico.","Diaz p. 59"),e("Note: possibly same as Martín Ramos de Lares.")]);
+p("Martin Ramos de Lares",[],["Diego loyalist"],["Diaz p. 48"],[]); 
+p("Martinez del Fregenal",[],"",[],[e("Joined in Havana. Brother of Juan de Nájera.","Diaz p. 54")]);
+p("Mesa The Gunner",["Artilleryman"],"",["Diaz p. 55"],[e("Ordered to clean guns and check ammo before battles of Potonchan/Cintla."),e("Went on hunting trip with Moctezuma on two sloops, with 200 soldiers.","Diaz 257")]);
+p("Miguel de Zaragoza",[],"",[],[e("Stayed behind from Grijalva journey; came out when Cortés arrived. Was living with Totonacs.","Thomas 212")]);
+p("Ochoa (Basque)",["Alguacil"],"Basque",["Diaz 102"],[e("Appointed Alguaciles (storekeeper) of Vera Cruz.","Diaz 102")]);
+p("Olea / Cristobal de Olea*",["Soldier"],"",["Diaz 380"],[e("Saved Cortés from warriors in the 2nd Siege of Tenochtitlan.","Aguilar 8th, Diaz 380"),e("Later died in battle defending Cortés.")]);
+p("Orduña*",[],"",[],[]);
+p("Orteguilla",["Page"],"",["Diaz p. 231"],[e("Cortés's page."),e("Sent to ask Moctezuma for a tour of Tlatelolco.","Diaz 131"),e("Spoke Nahuatl and was requested by Moctezuma as an attendant during captivity.","Diaz 250"),e("Used as a spy in service to Moctezuma.","Diaz 250")]);
+p("Ortiz the Musician",["Musician"],"",[""],[ e("Joined in Trinidad. Sold his co-owned horse El Arriero to Cortés.")]);
+p("Pacheco",[],"",[],[e("Joined in Havana.","Diaz p. 54")]);
+p("Pedro de Alvarado, Capt.",["Captain"],"GRIJ",["Diaz 27"],[e("One of four captains on Grijalva expedition.","Diaz 27"),e("Returned from Grijalba expedition with word of gold and riches."),e("Joined in Trinidad with his brothers. In Cuba, led men overland to Havana."),e("Chosen as Commander of Expeditions in Vera Cruz.","Diaz 102"),e("Led 100 men inland from Vera Cruz; visited villages where sacrifices were found.","Diaz 104-05"),e("Given daughter of Xicotencatl in Tlaxcala, Doña Luisa.","Diaz 178"),e("Sent to Tenochtitlan but turned back; described by Mexica as handsome, given the name Tonatio (Son of the Sun).","Diaz 187"),e("Selected to visit Moctezuma on Day 2 in Tenochtitlan.","Diaz p. 221"),e("Confronted Cortés about seizing Moctezuma; went to seize him in his quarters.","Diaz 243, 245"),e("Went to the Temple with Moctezuma and 150 soldiers to prevent sacrifices.","Diaz 256"),e("Went on hunting trip with Moctezuma on two sloops, with 200 soldiers.","Diaz 257"),e("Horse: sorrel mare, well trained. Brothers: Jorge, Gonzalo, Gomez, Juan de Alvarado.")]);
+p("Pedro de Guzman the Bowman",["Crossbowman"],"",["Diaz p. 59"],[e("Crossbowman put in charge of crossbow repair with Juan Benitez in Cozumel.","Diaz p. 59")]);
+p("Pedro de Ircio / Dircio",["Captain"],"",["Gom 91"],[e("Appointed Captain of Vera Cruz when Cortés left for Mexico; left with 2 horses and 2 arquebuses.","Gom 91"),e("Sent a letter to Cortés about an attack that killed nine Spanish.","Gom 169"),e("Attacked Tlayacapan in the Chalco campaign in 1521.","Cort 175")]);
+p("Pedro / Juan Escudero",[],["Diego loyalist"],["Cortés 87","Diaz 129"],[e("Named by Cortés in letter 2 as one of four traitors who tried to steal ship.","Cortés 87, Aguilar Ch 3"),e("Arrested after founding of Vera Cruz; sentenced to death for trying to sail to Cuba.","Diaz 129, Aguilar Ch 3"),e("Gómara and Aguilar say he was executed; Díaz agrees.","Diaz 265")]);
+p("Pedro Hernandez",["Secretary"],"",["Diaz 265"],[e("Cortés's secretary."),e("Was present when Moctezuma swore fealty to Spain.","Diaz 265")]);
+p("Pedro Lopez",["Crossbowman","Soldier"],"",["Diaz 253"],[e("A great crossbowman.","Diaz 253"),e("Snapped while guarding Moctezuma — To hell with this dog — and was flogged for it.","Diaz 253")]);
+p("Pedro Melgarejo*",["Friar"],"",["Diaz 358"],[e("Friar dispatched by Cortés to join his southern units and calm tensions between captains.","Diaz 358")]);
+p("Pedro Moreno Medrano*",["Gunner"],"",["Diaz 382"],[e("Gunner who held the causeway during Siege of Tenochtitlan.","Diaz 382, 390")]);
+p("Pedro de Moron",["Horseman"],"",["Diaz p. 145"],[e("Fought off an attack, severely wounded and horse killed.","Diaz p. 145"),e("Died of wounds from the Tlaxcala army.","Diaz 146")]);
+p("Pedro Sanchez Farfan",[],"",[],[e("Joined in Trinidad.","Diaz p. 50"),e("Wikipedia states he was the husband of the female conquistador María de Estrada.")]);
+p("Pedro de la Vega",[],"",[],[e("One of Velázquez's messengers sent to Trinidad to stop Cortés. He joined the expedition there.","Diaz p. 52")]);
+p("Pedro Valenciano",[],"",[],[e("Made cards for gambling.","Diaz 274")]);
+p("Pedro Xuarez Gallinato de Porra",[],"",[],[e("Sent to Jamaica right out of port to get supplies. From Seville.")]);
+p("Pizarro",["Captain"],"",["Diaz 265"],[e("Sent to examine mines on the north coast with four soldiers, four Mexican chiefs, and 40 days.","Diaz 265"),e("Said to be 250 miles away. Returned with 1,000+ pesos of gold dust.","Diaz 268")]);
+p("De Portillo, Capt.",["Captain","Brig commander"],"",["Diaz 369"],[e("Fought in Italy."),e("Killed commanding his brig in Siege of Tenochtitlan.","Diaz 369")]);
+p("R?..jon De Lovera*",["Brig commander"],"",["Ixtlil 307"],[e("From Medina del Campo. First name lost.","Ixtlil 307"),e("Commanded brig in Siege of Tenochtitlan.","Ixtlil 307")]);
+p("Rodrigo de Castaneda",[],"",[],[e("Attacked and pushed into water during siege but escaped.","Flor 211")]);
+p("Rodrigo Rengel / Rangel",["Chamberlain","Brig commander"],"",["Ixtlil 307"],[e("Joined from Santispiritus, Cuba."),e("Chosen as Chamberlain in Havana."),e("Was in charge of Narváez and his prisoners in Villa Rica.","Diaz 283"),e("Led a brigantine on Siege of Tenochtitlan.","Ixtlil 307")]);
+p("Rodriguez de Villafuerte*",["Captain","Flagship brig captain"],"",["Ixtlil 307"],[e("From Medellín, Spain."),e("Attacked Tlayacapan in the Chalco campaign in 1521.","Cort 175"),e("Captain of flagship brigantine for Siege of Tenochtitlan.","Ixtlil 307")]);
+p("Rojas",[],"",[],[e("Joined in Havana.","Diaz p. 54")]);
+p("Rojas the Rich",[],"",[],[e("Mentioned on Díaz p. 54.","Diaz p. 54")]);
+p("Ruy Gonzalez*",["Captain"],"",["Ixtlil 307"],[e("Lower captain on Siege of Tenochtitlan.","Ixtlil 307")]);
+p("Santa Clara",[],"",[],[e("Joined in Havana.","Diaz p. 54")]);
+p("Sebastian Rodriguez",[],"",[],[e("Joined in Havana.","Diaz p. 54")]);
+p("Trujillo",["Sailor"],"",["Diaz 253"],[e("Appears to have broken wind in front of Moctezuma, who took great offense. The next day Moctezuma gave him gold and asked him not to do it again. That night he did it again and was removed from duty.","Diaz 253")]);
+p("Valdelamar",[],"",[],[e("Went back to check on the Nautla incident with Aguilar and De Tapia.","Aguilar Ch 6")]);
+p("Vasco Porcallo*",["Brig commander"],"",["Ixtlil 307"],[e("Led a brigantine on Siege of Tenochtitlan.","Ixtlil 307")]);
+
+// ── Render ──────────────────────────────────────────────────────────
+
+function makeBadges(person) {
+  var html = "";
+  var loyalty = Array.isArray(person.loyalty) ? person.loyalty.join(" ") : person.loyalty;
+  if (loyalty.indexOf("Narváez") !== -1) html += '<span class="badge bn">Narváez</span>';
+  if (loyalty.indexOf("Diego loyalist") !== -1) html += '<span class="badge bd">Diego loyalist</span>';
+  for (var i = 0; i < person.roles.length; i++) {
+    html += '<span class="badge br">' + person.roles[i] + '</span>';
+  }
+  for (var j = 0; j < person.sources.length; j++) {
+    if (person.sources[j]) html += '<span class="badge bs">' + person.sources[j] + '</span>';
+  }
   return html;
 }
 
-function renderPerson(p) {
-  const eventsHtml = p.events.length === 0 ? '' :
-    '<div class="entry-body"><ul class="event-list">' +
-      p.events.map(function(e) {
-        return '<li class="event-item">' + e.text + (e.src ? '<span class="src">(' + e.src + ')</span>' : '') + '</li>';
-      }).join('') +
-    '</ul></div>';
-
-  return `<details>
-    <summary>
-      <i class="toggle-arrow">▶</i>
-      <div class="summary-main">
-        <span class="person-name">${p.name}</span>
-        ${renderBadges(p)}
-      </div>
-    </summary>
-    ${eventsHtml}
-  </details>`;
-}
-
-function renderMisc(query) {
-  const filtered = query
-    ? MISC.entries.filter(e =>
-        e.name.toLowerCase().includes(query) ||
-        (e.note && e.note.toLowerCase().includes(query)) ||
-        (e.src && e.src.toLowerCase().includes(query))
-      )
-    : MISC.entries;
-  if (!filtered.length) return '';
-  var miscItems = filtered.map(function(e) {
-    return '<div class="misc-entry">' +
-      '<div class="misc-entry-name">' + e.name + (e.src ? ' <span class="badge badge-source">' + e.src + '</span>' : '') + '</div>' +
-      (e.note ? '<p style="font-size:13.5px;color:var(--text-muted);line-height:1.55;margin-top:3px">' + e.note + '</p>' : '') +
-      '</div>';
-  }).join('');
-  return '<div class="section-group" id="group-MISC"><div class="section-heading">' + MISC.label + '</div>' + miscItems + '</div>';
-}
-
-function filterAll() {
-  const q = document.getElementById('search').value.toLowerCase().trim();
-  const filtered = q
-    ? PEOPLE.filter(p =>
-        p.name.toLowerCase().includes(q) ||
-        p.roles.some(r => r.toLowerCase().includes(q)) ||
-        p.loyalty.toLowerCase().includes(q) ||
-        p.sources.some(s => s.toLowerCase().includes(q)) ||
-        p.events.some(e =>
-          e.text.toLowerCase().includes(q) ||
-          (e.src && e.src.toLowerCase().includes(q))
-        )
-      )
-    : PEOPLE;
-
-  const groups = getLetterGroups(filtered);
-  allLetters = Object.keys(groups).sort();
-
-  document.getElementById('result-count').textContent = `${filtered.length} of ${PEOPLE.length}`;
-
-  // alpha nav
-  const nav = document.getElementById('alpha-nav');
-  nav.innerHTML = allLetters.map(l =>
-    `<button id="alpha-${l}" onclick="jumpTo('${l}')">${l}</button>`
-  ).join('');
-
-  // list
-  const container = document.getElementById('list-container');
-  let html = renderMisc(q);
-  allLetters.forEach(letter => {
-    html += `<div class="section-group" id="group-${letter}">
-      <div class="section-heading">${letter}</div>
-      ${groups[letter].map(renderPerson).join('')}
-    </div>`;
-  });
-  if (!filtered.length && !renderMisc(q)) {
-    html = '<p class="no-results">No matches found.</p>';
+function makePersonHTML(person) {
+  var evHTML = "";
+  for (var i = 0; i < person.events.length; i++) {
+    var ev = person.events[i];
+    evHTML += '<div class="event">' + ev.text;
+    if (ev.src) evHTML += '<span class="src">(' + ev.src + ')</span>';
+    evHTML += '</div>';
   }
-  container.innerHTML = html;
+  var body = evHTML ? '<div class="events">' + evHTML + '</div>' : '';
+  return '<details><summary><span class="arr">&#9654;</span>' +
+    '<span style="flex:1">' + person.name + '</span>' +
+    '<span class="badges">' + makeBadges(person) + '</span>' +
+    '</summary>' + body + '</details>';
 }
 
-function jumpTo(letter) {
-  const el = document.getElementById('group-' + letter);
-  if (el) el.scrollIntoView({ behavior: 'smooth', block: 'start' });
+function makeMiscHTML(entries) {
+  var html = '<div id="group-MISC"><div class="letter-head">Miscellaneous Groups</div>';
+  for (var i = 0; i < entries.length; i++) {
+    var entry = entries[i];
+    html += '<div class="misc-entry"><div class="misc-name">' + entry.name;
+    if (entry.src) html += ' <span class="badge bs">' + entry.src + '</span>';
+    html += '</div>';
+    if (entry.note) html += '<div class="misc-note">' + entry.note + '</div>';
+    html += '</div>';
+  }
+  html += '</div>';
+  return html;
 }
 
-filterAll();
+function matches(person, q) {
+  if (!q) return true;
+  var haystack = person.name.toLowerCase();
+  for (var i = 0; i < person.roles.length; i++) haystack += " " + person.roles[i].toLowerCase();
+  var loyalty = Array.isArray(person.loyalty) ? person.loyalty.join(" ") : person.loyalty;
+  haystack += " " + loyalty.toLowerCase();
+  for (var j = 0; j < person.sources.length; j++) haystack += " " + person.sources[j].toLowerCase();
+  for (var k = 0; k < person.events.length; k++) {
+    haystack += " " + person.events[k].text.toLowerCase();
+    if (person.events[k].src) haystack += " " + person.events[k].src.toLowerCase();
+  }
+  return haystack.indexOf(q) !== -1;
+}
+
+function render() {
+  var q = document.getElementById("search").value.toLowerCase().trim();
+  var filtered = [];
+  for (var i = 0; i < PEOPLE.length; i++) {
+    if (matches(PEOPLE[i], q)) filtered.push(PEOPLE[i]);
+  }
+  document.getElementById("count").textContent = filtered.length + " of " + PEOPLE.length;
+
+  // Group by letter
+  var groups = {};
+  for (var i = 0; i < filtered.length; i++) {
+    var letter = filtered[i].name[0].toUpperCase();
+    if (!groups[letter]) groups[letter] = [];
+    groups[letter].push(filtered[i]);
+  }
+  var letters = Object.keys(groups).sort();
+
+  // Alpha nav
+  var alphaHTML = "";
+  for (var i = 0; i < letters.length; i++) {
+    alphaHTML += '<button onclick="jump(\'' + letters[i] + '\')">' + letters[i] + '</button>';
+  }
+  document.getElementById("alpha").innerHTML = alphaHTML;
+
+  // Main content
+  var html = "";
+
+  // Misc section
+  var miscFiltered = [];
+  for (var i = 0; i < MISC.length; i++) {
+    var m = MISC[i];
+    var mHay = m.name.toLowerCase() + " " + (m.note||"").toLowerCase() + " " + (m.src||"").toLowerCase();
+    if (!q || mHay.indexOf(q) !== -1) miscFiltered.push(m);
+  }
+  if (miscFiltered.length) html += makeMiscHTML(miscFiltered);
+
+  // People by letter
+  for (var i = 0; i < letters.length; i++) {
+    var letter = letters[i];
+    html += '<div id="group-' + letter + '"><div class="letter-head">' + letter + '</div>';
+    var grp = groups[letter];
+    for (var j = 0; j < grp.length; j++) {
+      html += makePersonHTML(grp[j]);
+    }
+    html += '</div>';
+  }
+
+  if (!filtered.length && !miscFiltered.length) {
+    html = '<p style="color:#aaa;font-family:sans-serif;padding:2rem;text-align:center">No matches found.</p>';
+  }
+
+  document.getElementById("output").innerHTML = html;
+}
+
+function jump(letter) {
+  var el = document.getElementById("group-" + letter);
+  if (el) el.scrollIntoView({behavior:"smooth", block:"start"});
+}
+
+document.getElementById("search").addEventListener("input", render);
+render();
 </script>
 </body>
 </html>
