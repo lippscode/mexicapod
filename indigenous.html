@@ -1,0 +1,950 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Indigenous & Allied Personnel – Conquest of Mexico</title>
+<style>
+body { font-family: Georgia, serif; max-width: 900px; margin: 0 auto; padding: 1.5rem 1rem; background: #f8f6f1; color: #1a1714; }
+h1 { font-size: 1.85rem; font-weight: normal; color: #2a5a3a; border-bottom: 2px solid #2a5a3a; padding-bottom: 0.75rem; margin-bottom: 0.5rem; }
+.subtitle { font-family: sans-serif; font-size: 13px; color: #777; margin-bottom: 1.25rem; }
+
+/* Group nav */
+.group-nav { display: flex; flex-wrap: wrap; gap: 5px; margin-bottom: 1rem; }
+.group-nav button {
+  font-family: sans-serif; font-size: 12px; padding: 4px 10px;
+  border-radius: 3px; border: 1px solid #bbb; background: #fff;
+  cursor: pointer; color: #444;
+}
+.group-nav button:hover { border-color: #2a5a3a; color: #2a5a3a; }
+.group-nav button.active { background: #2a5a3a; color: #fff; border-color: #2a5a3a; }
+
+/* Controls */
+.controls { position: sticky; top: 0; background: #f8f6f1; padding: 0.6rem 0; border-bottom: 1px solid #ddd; margin-bottom: 1rem; z-index: 10; }
+.search-row { display: flex; align-items: center; gap: 8px; margin-bottom: 6px; }
+#search { flex: 1; padding: 7px 12px; border: 1px solid #ccc; border-radius: 4px; font-size: 14px; font-family: sans-serif; color: #1a1714; }
+#search:focus { outline: none; border-color: #2a5a3a; }
+.count { font-family: sans-serif; font-size: 12px; color: #aaa; white-space: nowrap; }
+.alpha-row { display: flex; flex-wrap: wrap; gap: 3px; }
+.alpha-row button { font-size: 11px; padding: 2px 7px; border: 1px solid #ccc; border-radius: 3px; background: #fff; cursor: pointer; font-family: sans-serif; }
+.alpha-row button:hover { background: #2a5a3a; color: #fff; border-color: #2a5a3a; }
+
+/* Section */
+.group-section { margin-bottom: 2rem; }
+.group-heading {
+  font-size: 1.25rem; font-weight: normal; color: #2a5a3a;
+  border-bottom: 2px solid #2a5a3a; padding-bottom: 4px;
+  margin-bottom: 0.75rem; scroll-margin-top: 120px;
+  font-family: 'Palatino Linotype', Palatino, Georgia, serif;
+}
+.letter-head {
+  font-family: sans-serif; font-size: 11px; font-weight: 600;
+  color: #999; text-transform: uppercase; letter-spacing: 0.08em;
+  border-bottom: 1px solid #e8e4de; padding-bottom: 3px;
+  margin: 0.75rem 0 0.5rem; scroll-margin-top: 120px;
+}
+
+/* Unnamed groups box */
+.unnamed-box {
+  background: #f0ede6; border: 1px solid #ddd;
+  border-radius: 4px; padding: 8px 12px; margin-bottom: 8px;
+}
+.unnamed-box-title { font-size: 13px; font-weight: bold; color: #444; margin-bottom: 4px; font-family: sans-serif; }
+.unnamed-box-note { font-size: 13px; color: #666; line-height: 1.5; }
+
+/* Person entries */
+details { background: #fff; border: 1px solid #dde8e0; border-radius: 4px; margin-bottom: 4px; }
+details:hover { border-color: #aacabb; }
+details[open] { border-color: #aacabb; }
+summary { padding: 8px 12px; cursor: pointer; list-style: none; display: flex; align-items: flex-start; gap: 8px; font-family: Georgia, serif; font-size: 14.5px; }
+summary::-webkit-details-marker { display: none; }
+.arr { font-size: 9px; color: #aaa; flex-shrink: 0; margin-top: 4px; }
+details[open] .arr { display: inline-block; transform: rotate(90deg); }
+.sname { flex: 1; }
+.badges { display: flex; flex-wrap: wrap; gap: 3px; margin-left: 4px; }
+.badge { font-size: 10.5px; padding: 1px 6px; border-radius: 3px; font-family: sans-serif; white-space: nowrap; }
+.bg { background: #e6f0e8; color: #1e5a2e; } /* group */
+.br { background: #e8f0f5; color: #1e4d6b; } /* role */
+.bs { background: #f0ede8; color: #5a5048; } /* source */
+.events { padding: 0 12px 10px 26px; }
+.event { font-size: 13.5px; color: #555; line-height: 1.55; border-left: 2px solid #dde8e0; padding: 3px 0 3px 10px; margin-bottom: 3px; }
+.src { font-size: 11px; color: #aaa; margin-left: 5px; }
+
+.no-results { font-family: sans-serif; font-size: 14px; color: #aaa; padding: 2rem; text-align: center; }
+.footer { margin-top: 2rem; padding-top: 1rem; border-top: 1px solid #ddd; font-family: sans-serif; font-size: 12px; color: #aaa; }
+</style>
+</head>
+<body>
+
+<h1>Indigenous &amp; Allied Personnel</h1>
+<p class="subtitle">Conquest of Mexico, 1519–1521 · Compiled from Díaz, Gómara, Cortés, Aguilar, Ixtlilxóchitl, Durán, Florentine Codex, León-Portilla, and related primary sources.</p>
+
+<div class="controls">
+  <div class="search-row">
+    <input type="text" id="search" placeholder="Search by name, role, source, or keyword…">
+    <span class="count" id="count"></span>
+  </div>
+  <div class="alpha-row" id="alpha"></div>
+</div>
+
+<div class="group-nav" id="group-nav"></div>
+<div id="output"></div>
+
+<div class="footer">Sources: Bernal Díaz del Castillo · Francisco López de Gómara · Hernán Cortés (Letters) · Francisco de Aguilar · Fernando de Alva Ixtlilxóchitl · Diego Durán · Florentine Codex · Miguel León-Portilla · Annals of Quauhtitlan · Crónica Mexicayotl</div>
+
+<script>
+// ── Data ─────────────────────────────────────────────────────────────────────
+function e(text, src) { return {text: text, src: src || ""}; }
+
+var GROUPS = [];
+
+function grp(id, label, color, unnamed, people) {
+  GROUPS.push({id: id, label: label, color: color, unnamed: unnamed, people: people});
+}
+
+function p(name, roles, sources, events) {
+  return {name: name, roles: roles || [], sources: sources || [], events: events || []};
+}
+
+// ── CHOLULANS ────────────────────────────────────────────────────────────────
+grp("cholulans", "Cholulans", "#2a5a3a", [
+  {name: "4 Commoner Messengers", note: "4 commoners sent to Tlaxcala to converse with Cortés. No gifts — seemed an affront, and the Spanish demanded to meet with nobles instead."},
+], [
+  p("Bishop (Chief)", ["Chief"], ["Diaz p. 192"], [
+    e("One of two chiefs summoned by Cortés before the massacre to inquire about suspicious behavior.", "Diaz p. 192"),
+    e("Excused from the Cholula Massacre but returned afterward to beg peace."),
+  ]),
+  p("Old Woman", [], ["Diaz p. 197"], [
+    e("Came to La Malinche before the attack at Cholula, asking her to seek safety.", "Diaz p. 197"),
+    e("Marina reported this to Cortés. The woman spilled the entire plan. Cortés had her brought to him, interrogated, and held captive."),
+  ]),
+  p("Tlalchiac", ["Lord of Cholula"], ["Leon p. 43"], [
+    e("One of two lords in charge of Cholula.", "Leon p. 43"),
+  ]),
+  p("Tlaquiach", ["Lord of Cholula"], ["Leon p. 43"], [
+    e("One of two lords in charge of Cholula.", "Leon p. 43"),
+  ]),
+]);
+
+// ── COTAXTLANS ───────────────────────────────────────────────────────────────
+grp("cotaxtlans", "Cotaxtlans", "#2a5a3a", [], [
+  p("Cuitlalpitoc / Pitalpitoque (Ovandillo)", ["Ambassador"], ["Flor 56","Diaz p. 89","Duran 495"], [
+    e("Ambassador from Cuetlaxtlan, sent from Tenochtitlan. Described as a dependent, subordinate leader.", "Flor 56"),
+    e("Described as Moctezuma's slave of Teuctlamcazqui.", "Duran 495"),
+    e("Took the Lord of Cuetlaxtlan to the sea to look at the mountains floating. Climbed a tree to see the Spaniards.", "Duran 496"),
+    e("Was given his freedom as a result of speaking with the Spanish.", "Duran 502"),
+    e("Delivered gifts to Cortés at Ulua: fowl, maize cakes, cloth and gold.", "Diaz p. 89, Quiahuitzlan 281"),
+    e("He and Tendile rule Cotustan, Tuxtepec, Guazpaltepeque, Tatalteco."),
+    e("Also met the Grijalva expedition.", "Duran 496"),
+  ]),
+  p("Francisco (Local leader)", ["Local leader"], ["Diaz"], [
+    e("Local leader from Rio de Banderas near San Juan Ulua. Was taken and baptized.", "Diaz"),
+  ]),
+  p("Grand Emissary of Cuetlaxtlan", ["Emissary"], ["Lock 257"], [
+    e("Went with Moctezuma's man Cuitlapitoc to look at the Spanish fleet. Reported directly to Moctezuma.", "Lock 257"),
+    e("Possibly Pinotl or Tendille. Cuetlaxtecatl?"),
+  ]),
+  p("Man from Mictlancuauhtla", [], ["Leon p. 16"], [
+    e("Brought news to Moctezuma of mountains on the sea. Had no ears or toes.", "Leon p. 16"),
+  ]),
+  p("Cuetlaxtecatl Pinotl / Pinotzin / Pinotecuhtli", ["Steward","Governor"], ["Flor 56","Leon 16","Annals of Quauhtitlan"], [
+    e("Steward of Cuetlaxtlan, leader of Quetlaxtlan people, governor of Cuetlaxtlan.", "Flor 56, Leon 16"),
+    e("Goes first to trade with Grijalva in 1518.", "Flor 57"),
+    e("Receives Cuitlalpitoc and Grand Emissary at Cuetlaxtlan.", "Leon 16"),
+    e("Made an initial trip to see the Spanish before Cuitlalpitoc, then definitely went to see the Christians on the coast.", "Flor 56-58"),
+    e("After meeting with Grijalva returned to Tenochtitlan to report to Moctezuma.", "Flor 58"),
+    e("Brought gifts to Moctezuma.", "Annals of Quauhtitlan 281"),
+  ]),
+  p("Teocinyocatl", ["Steward"], ["Flor 56"], [
+    e("Steward of Teocinyocan.", "Flor 56"),
+    e("Went with Pinotl to the sea to look at Grijalva's ships.", "Flor 56"),
+  ]),
+  p("Yaotzin", ["Steward"], ["Flor 56"], [
+    e("Steward of Mictlanquauhtla.", "Flor 56"),
+    e("Went with Pinotl to the sea to see Grijalva.", "Flor 56"),
+  ]),
+]);
+
+// ── MAYA – COZUMEL ───────────────────────────────────────────────────────────
+grp("maya-cozumel", "Maya – Cozumel", "#2a5a3a", [
+  {name: "2 Old Men", note: "Díaz reports they encountered two old men near an abandoned village.", src: "Diaz 28"},
+  {name: "2 Women with Chief's Wife", note: "Wife of the chief was found with two other women.", src: "Gom 27, Ixtlil 140"},
+  {name: "3 Children", note: "Were with the wife of the chief.", src: "Gom 27"},
+  {name: "3 Men in a Canoe", note: "First Letter states they intercepted three men in a canoe headed for the mainland. The men said the islanders had fled inland.", src: "Cortés 68"},
+  {name: "10–12 People", note: "First Letter says two captains went out and returned with 10–12 people.", src: "Cortés 68"},
+  {name: "2,000 Islanders", note: "Andres de Tapia describes the island as having 2,000 residents.", src: "Tapia"},
+  {name: "Captured Folks", note: "Alvarado captured two men and a woman. They were given gifts by Cortés and sent back to find their villagers."},
+  {name: '"Several Natives"', note: "Came to check on the chief's wife on his behalf.", src: "Gom 27"},
+], [
+  p("Chief, Calachuni / Lord of the Island", ["Chief"], ["Gom 27","Cort 68","Ixtlil 140"], [
+    e("Fled from the Spanish but his wife was found. Cortés urged him to return for the sake of his wife and people, which he did.", "Gom 27"),
+    e("Was told of Jesus and Charles V; brought all the people back to town.", "Cort 68"),
+  ]),
+  p("Jamaican Girl", [], ["Diaz 28"], [
+    e("Díaz says they met a Jamaican native who told them she had been taken by current in a canoe with other men and ended up on Cozumel. She joined them.", "Diaz 28"),
+  ]),
+  p("Principal Man", [], ["Cortés 68"], [
+    e("Was among the 10–12 mentioned in the first letter. Was sent to retrieve the caciques of the island.", "Cortés 68"),
+  ]),
+  p("Wife of the Lord", [], ["Gom 27","Ixtlil 140"], [
+    e("Discovered hiding with three children and four servants. Cortés dressed her and she coaxed out her husband the chief.", "Gom 27, Ixtlil 140"),
+  ]),
+]);
+
+// ── MAYA – TABASCO/YUCATAN ───────────────────────────────────────────────────
+grp("maya-tabasco", "Maya – Tabasco / Yucatan", "#2a5a3a", [
+  {name: "12,000 Tabasco Warriors", note: "On banks of Rio Grijalva near Champoton.", src: "Diaz p. 68"},
+  {name: "5 Prisoners from Battle of Cintla", note: "2 were captains. Sent to the chiefs of Tabasco.", src: "Diaz p. 76"},
+], [
+  p("Aquincuz", ["Chief"], ["Gom 32"], [
+    e("Chief of Xamanzana.", "Gom 32"),
+    e("Held Jeronimo de Aguilar as laborer until his death soon after Aguilar came to him."),
+  ]),
+  p("Julian", ["Translator"], ["Diaz 20"], [
+    e("Captured at Cape Catoche by Córdoba.", "Diaz 20"),
+  ]),
+  p("Lazaro", ["Chief"], ["Cort p. 63"], [
+    e("Chief of Campoche, the northernmost tip of Yucatan. Mentioned in the Córdoba expedition.", "Cort p. 63"),
+  ]),
+  p("Melchior / Melchorejo", ["Translator"], ["Diaz 20","Gom p. 28"], [
+    e("Maya man captured at Cape Catoche during the Córdoba Expedition.", "Diaz 20"),
+    e("Apparently went to Spain and was brought back by Córdoba; acted as translator.", "Gom p. 28"),
+    e("Translated in Cozumel and helped discover there were Spaniards living in Yucatan."),
+    e("Betrayed Cortés at Tabasco — snuck away and encouraged the Maya attack.", "Diaz p. 74"),
+    e("Caught by Maya and sacrificed for his bad advice after heavy loss at Cintla.", "Diaz 81"),
+  ]),
+  p("Moch Couoh", ["Chief"], ["Cort p. 63"], [
+    e("Chief of Chompoton / Chakan Putun. Named as chief of Potonchan by members of the Córdoba expedition.", "Cort p. 63"),
+    e("Beat the Córdoba men badly in an early morning ambush — 26 killed."),
+    e("Brother to Tabscoob."),
+    e("Killed in battle with Grijalva expedition in 1518."),
+  ]),
+  p("Nanchancan", ["Chief"], ["Gom 32"], [
+    e("Chief of Chetemal.", "Gom 32"),
+    e("Held Gonzalo Guerrero as military chief.", "Gom 32"),
+  ]),
+  p("Tabscoob", ["Chief"], ["Diaz 80"], [
+    e("Chief of the Tabasco region and Potonchan.", "Diaz 80"),
+    e("Met with Grijalva June 8, 1518, avoiding conflict."),
+    e("Led Maya forces at Potonchan and Centla."),
+    e("Brother of Chompoto, chief of Chompoton.", "Diaz 80"),
+  ]),
+  p("Taxmar", ["Chief"], ["Gom 32"], [
+    e("Chief of Xamanzana, successor to Aquincuz.", "Gom 32"),
+    e("Held Jeronimo de Aguilar as laborer until Cortés arrived."),
+  ]),
+]);
+
+// ── MEXICA ───────────────────────────────────────────────────────────────────
+grp("mexica", "Mexica", "#2a5a3a", [
+  {name: "2 Sons of Nezahualiplli", note: "Killed leaving Tenochtitlan on Noche Triste.", src: "Ixtlil 281"},
+  {name: "3 Sisters of Cacama / 4 Daughters of Nezahualpiltzintli", note: "Killed by Spanish before departing on Noche Triste.", src: "Ixtlil 281, Leon 91"},
+  {name: "4 Mexica Dignitaries (Totonac deal)", note: "Old men. Met with Cortés and 2 nephews after Totonac deal."},
+  {name: "4 Mexica Dignitaries (Cholula)", note: "Met with Cortés at Cholula and brought gifts, begging him to come to Tenochtitlan.", src: "Diaz p. 186"},
+  {name: "4 Mexica Dignitaries (Eagle Pass)", note: "Met Cortés at Eagle Pass.", src: "Diaz 211"},
+  {name: "5 Tax-Collectors", note: "Came to Quiahuitzlan while Cortés was there. He told them to stop taking sacrificial victims. Taken prisoner.", src: "Diaz 112, Gom 79"},
+  {name: "5 Mexica Messengers", note: "Sent to greet the Spanish with gifts. Moctezuma calls them Jaguar Knights and expects they will meet Quetzalcoatl.", src: "Leon 22"},
+  {name: "6 Mexica Chieftains / Messengers", note: "Visited Spanish in Teocacingo during Tlaxcala attacks. Offered tribute to leave. Later asked for peace and to be vassals.", src: "Diaz p. 166, Gom p. 108"},
+  {name: "15–20 Spies at Chalco", note: "Cortés stayed one night at a town on the water. He captured 15–20 spies and had them killed to prevent their messages being sent."},
+  {name: "40 Female Slaves", note: "Presented to Cortés by Moctezuma's brother at Amecameca.", src: "Cort p. 103"},
+  {name: "Several Foot Jugglers", note: "Brought to Spain.", src: "Gom 145"},
+], [
+  p("Atlixcatzin", ["Tenochca Nobleman","Tlacateccatl"], ["Flor 118"], [
+    e("Present when Cortés met Moctezuma.", "Flor 118"),
+  ]),
+  p("Axayacatl", ["Tlatoani"], [], [
+    e("Tlatoani of Tenochtitlan, predecessor to Moctezuma."),
+  ]),
+  p("Brother of Moctezuma (Cuitlahuac?)", ["Lord"], ["Cort p. 103"], [
+    e("Meets with Cortés outside Chalco. Brought more gold and asked Cortés to go back.", "Cort p. 103"),
+    e("Said Moctezuma would do whatever he wanted if he did not enter the city."),
+  ]),
+  p("Cacama / Cacamatzin", ["Lord of Texcoco"], ["Gom 136","Diaz 213","Flor 118"], [
+    e("Son of Nezahualipilli, lord of Texcoco, 25 years old.", "Gom p. 136, Diaz 213, Leon 61"),
+    e("Persona: Bellicose, spirited and fearless man.", "Ixtlil 273"),
+    e("Met with Cortés near Chalco and asked him not to come to Mexico.", "Gom p. 136"),
+    e("Most richly dressed Indian Díaz had yet seen — much pomp and fancy feather dress.", "Diaz p. 213"),
+    e("Escorted them to Mexico and went ahead on the causeway to meet Moctezuma, returned at his side.", "Diaz p. 214"),
+    e("Was present when Cortés and Moctezuma met.", "Flor 118, Cort 105"),
+    e("Was bitterly offended by captivity of uncle Moctezuma; scolded all the Mexica nobility for allowing it.", "Ixtlil 273"),
+    e("Rebelled against Cortés and organized resistance. Challenged them to come get him.", "Cort p. 112"),
+    e("Was captured and brought by canoe to Tenochtitlan and held by Cortés. His brothers Ixtlilxochitl and Coanocochtzin betrayed him.", "Ixtlil 274"),
+    e("Death: Listed by Díaz as lost in Noche Triste. Alva Ixtlilxochitl says he was murdered by Spanish before they fled.", "Diaz 302, Leon 90"),
+  ]),
+  p("Cepactzin", [], ["Ixtlil 280"], [
+    e("Mexica lord killed on Noche Triste.", "Ixtlil 280"),
+  ]),
+  p("Chimalpopoca", ["Son of Moctezuma"], ["Bernardino"], [
+    e("Sent to Texcoco with his brother as one of seven nobles to meet with Bernardino de Tapia and Pedro Alvarado.", "Bernardino"),
+    e("Died in battle on Noche Triste.", "Flor 156"),
+  ]),
+  p("Cihuacoatl (Woman-Serpent)", ["Title / High Adviser"], ["Flor 63","Chron 453"], [
+    e("Title for one of the highest ranking advisers to the Tlatoani. One of Moctezuma's leaders.", "Flor 63, Chron 453"),
+    e("Held by the son of Tlacaelel, who nominated Moctezuma for Tlatoani.", "Duran 388"),
+  ]),
+  p("Coacoatzin", [], ["Ixtlil 280"], [
+    e("Mexica lord killed on Noche Triste.", "Ixtlil 280"),
+  ]),
+  p("Coanacochtzin / Don Carlos", ["Tlatoani of Texcoco"], ["Ixtlil 273"], [
+    e("Tlatoani of Texcoco after his brother Cacama.", "Ixtlil 273"),
+    e("Betrayed Cacama with a fake plot for Texcoco to liberate Mexico.", "Ixtlil 273"),
+    e("Selected as king of Texcoco after Cacama was killed.", "Ixtlil 286"),
+    e("Was installed as ruler of Texcoco after Cacamatzin was taken hostage.", "Diaz 263"),
+  ]),
+  p("Cohuamacotzin", ["Prince of Texcoco"], ["Leon 58"], [
+    e("Brother to Ixtlilxocotl and Tecocoltzin.", "Leon 58"),
+    e("Baptized as Pedro, for Pedro de Alvarado his sponsor.", "Leon 60"),
+  ]),
+  p("Cualpopoca / Coatlpopoca", ["Commander"], ["Gom 169","Cort 108"], [
+    e("Named as having killed 9 Spanish in Veracruz, which Cortés used as justification for arresting Moctezuma.", "Gom 169, Cort 108"),
+    e("Led Spanish on a dangerous route to Tenochtitlan planned for them to fall — two horsemen are killed.", "Duran 517"),
+    e("De Tapia says he killed 1 horse, 1 Spaniard and injured many."),
+    e("Returned by force to Tenochtitlan by Moctezuma to answer for the deaths.", "Gom 177"),
+    e("Executed by burning in the plaza.", "Gom 177"),
+  ]),
+  p("Cuatlazol", ["Captain"], ["Leon, Aubin 81"], [
+    e("Young captain from Tolnahuac.", "Leon, Aubin 81"),
+    e("Was leading dances in Tenochtitlan when attack happened. Wore a lip plug that day.", "Leon-Aubin 81"),
+  ]),
+  p("Cuappiatzin / Quappiatzin", ["Chief of the House of Arrows"], ["Flor 63"], [
+    e("Summoned after Grijalva was spotted in Vera Cruz.", "Flor 63"),
+    e("Was present when Cortés and Moctezuma met.", "Leon 65"),
+  ]),
+  p("Cuicuixcatzin / Cucuzcacin", ["Lord of Texcoco"], ["Cort 112","Ixtlil 290"], [
+    e("Son of Cacamatzin. Cortés placed him in charge of Texcoco after kidnapping his father.", "Cort 112"),
+    e("Also known as Tocpacxochitzin.", "Ixtlil 290"),
+    e("Killed by his brother Coanacochtzin for delivering Cortés's message.", "Ixtlil 290"),
+    e("Later baptized as Don Carlos."),
+  ]),
+  p("Cuitlahuac", ["10th Tlatoani","Lord of Ixtapalapa"], ["Cort 105","Gom p. 137","Diaz 214"], [
+    e("Brother of Moctezuma. Lord of Ixtapalapa.", "Cort 105, Gom p. 137, Diaz 214"),
+    e("Met Cortés with Moctezuma.", "Gom p. 139, Cort 105"),
+    e("In consort with Moctezuma urged they not admit the Spanish to Tenochtitlan; but Cacama disagreed and won out.", "Leon 61"),
+    e("Seems to have co-conspired with Cacama to overthrow Moctezuma and attack Spanish but was found out and arrested.", "Diaz 263"),
+    e("Named new Emperor during Battle of Tenochtitlan. Moctezuma finds out on the terrace where he is wounded.", "Diaz 294"),
+    e("Cortés later hears of his ascension after the death of Moctezuma and that he is fortifying the city.", "Cort 140"),
+    e("Death: November 25, 1520.", "Cort 139"),
+  ]),
+  p("Daughter of Moctezuma / Tecuichpo?", ["Daughter of Moctezuma"], ["Cort p. 107"], [
+    e("Given to Cortés.", "Cort p. 107"),
+  ]),
+  p("Dona Francisco", ["Aztec Woman"], ["Diaz 253"], [
+    e("Given to Bernal Díaz by Moctezuma.", "Diaz 253"),
+    e("Was one of Moctezuma's mistresses."),
+  ]),
+  p("Dona Juana", [], ["Ixtlil 281"], [
+    e("Died on Noche Triste. Was baptized and pregnant when she died. Cortés loved her greatly and baptized her.", "Ixtlil 281"),
+  ]),
+  p("Don Carlos (Coanacoch)", ["Ruler of Texcoco"], ["Diaz 263"], [
+    e("Younger brother of Cacamatzin.", "Diaz 263"),
+    e("Was installed as ruler of Texcoco after Cacamatzin was taken hostage.", "Diaz 263"),
+  ]),
+  p("Dona Isabel / Tecuichpo", ["Daughter of Moctezuma"], [], [
+    e("Daughter of Moctezuma. Baptized as Dona Isabel."),
+    e("Wife of Cuauhtémoc, then Pedro Gallego, then Thoan Cano.", "Cano, Oviedo"),
+  ]),
+  p("Ecatempatiltzin / Hecateupatiltzin", ["Chief of the Refugees from the South"], ["Leon p. 22","Flor 63"], [
+    e("Summoned as counsel after Spanish seen along coast.", "Leon 22, Flor 63"),
+    e("Was present when Cortés met Moctezuma.", "Leon 65"),
+  ]),
+  p("Huehuetecatl", [], ["Flor 62"], [
+    e("Sent by Moctezuma to meet Cortés with gifts.", "Flor 62"),
+  ]),
+  p("Hueicamacatl", [], ["Flor 62"], [
+    e("Sent by Moctezuma to meet Cortés with gifts.", "Flor 62"),
+  ]),
+  p("Huitnahuatlailotlac", [], ["Flor 63"], [
+    e("Summoned by Moctezuma after Grijalva spotted in Vera Cruz.", "Flor 63"),
+  ]),
+  p("Huitznahuatl (Title / Motelchiuh)", [], ["Chron 515"], [
+    e("Title of person summoned by Moctezuma to bring Cortés to Tenochtitlan.", "Chron 515"),
+  ]),
+  p("Icpacxochitzin", ["Brother of Cacama"], ["Ixtlil 272"], [
+    e("Was sent to replace his brother who was hanged by Cortés in assessing the treasury of Texcoco.", "Ixtlil 272"),
+  ]),
+  p("Itzcauhtzin / Itzquauhtzin", ["Lord of Tlatelolco","Tlacochcalcatl"], ["Flor 118","Leon 65"], [
+    e("Present when Cortés met Moctezuma.", "Flor 118"),
+    e("Addressed the Mexica mob during the siege of Tenochtitlan on behalf of Moctezuma. They rejected his message and the Spanish pulled him off the terrace.", "Flor 146"),
+    e("Was killed with Moctezuma; his body put out by the Spanish, retrieved, then sent to Tlatelolco where he was burned with all the courtly ceremony.", "Flor 150"),
+  ]),
+  p("Ixtlilxochitl / Don Hernando", ["Prince of Texcoco"], ["Leon 56","Ixtlil 272"], [
+    e("Fourth son of Nezahualpilli to become king.", "Chron 468"),
+    e("One of the most feared and respected in the kingdom. Appears to be an ally to Cortés.", "Ixtlil 273"),
+    e("Betrayed Cacama with a fake plot for Texcoco to liberate Mexico and turned him over to Cortés.", "Ixtlil 273"),
+    e("Went to Texcoco to oppose his brother Coanacochtzin for attacking Cortés.", "Ixtlil 291"),
+    e("Was given a golden sword and shield by Cortés.", "Dur 553"),
+    e("Led attacks during the Siege of Tenochtitlan.", "Dur 555"),
+    e("Was baptized by Cortés as Don Hernando.", "Leon 59"),
+  ]),
+  p("Lord of Coyoacan", ["Lord"], ["Diaz 257"], [
+    e("Met with Cacamatzin to attack Spanish.", "Diaz 257"),
+    e("Seems to have been co-conspirator with Cacama to overthrow Moctezuma but was found out and arrested.", "Diaz 263"),
+  ]),
+  p("Lord of Culhuacan", ["Lord"], ["Gom p. 137"], [
+    e("Visited Cortés in Ixtapalapa with kinsman Cuitlahuac.", "Gom p. 137"),
+  ]),
+  p("Lord of Tacuba", ["Lord"], ["Diaz 257"], [
+    e("Part of resistance to Spanish.", "Diaz 257"),
+  ]),
+  p("Moctezuma II", ["9th Tlatoani"], [], [
+    e("Ninth Tlatoani of Tenochtitlan and ruler of the Mexica Empire."),
+  ]),
+  p("Motelchiuh", ["Huitznahuatl"], ["Chron 515"], [
+    e("Holds title of Huitznahuatl. Sent to Cempoala to guide Cortés to Tenochtitlan.", "Chron 515"),
+  ]),
+  p("Nezahualpilli", ["King of Tezcoco"], ["Leon p. 15"], [
+    e("King of Tezcoco, 1464–1515.", "Leon p. 15"),
+    e("Oversaw the nomination and election of Moctezuma.", "Duran 386"),
+    e("Offered a premonition of apocalypse to Moctezuma.", "Chronicles 452"),
+  ]),
+  p("Nezahualquentzin", ["Brother of Cacama"], ["Ixtlil 272"], [
+    e("Native of Tezcuco. Asked to survey and remove Texcoco's wealth by Cortés.", "Ixtlil 272"),
+    e("Grandson of King Nezahualpilli of Texcoco."),
+    e("Hanged by Cortés for conspiring with Moctezuma.", "Ixtlil 272"),
+  ]),
+  p("Oquiz", ["Nephew of Moctezuma"], ["Duran 506"], [
+    e("Nephew of Moctezuma. Installed in Azcapotzalco.", "Duran 506"),
+  ]),
+  p("Powerful Relative of Moctezuma (Cuitlahuac?)", [], ["Diaz 264"], [
+    e("Reputation for great valor.", "Diaz 264"),
+    e("Refused to attend meeting in Mexico and to pay tribute to Spain.", "Diaz 264"),
+    e("Tula was one of his towns. Moctezuma tried to arrest him but he fled.", "Diaz 264"),
+    e("Finally brought in; still disobeyed Moctezuma. Transferred to Spanish guard.", "Diaz 270"),
+  ]),
+  p("Quetzalaztatzin / Ticocyahucatl", ["Keeper of the Colors"], ["Flor 63","Flor 118"], [
+    e("Summoned by Moctezuma after Grijalva spotted in Vera Cruz.", "Flor 63"),
+    e("Was present when Cortés and Moctezuma met.", "Flor 118"),
+  ]),
+  p("Quetzalacxoy", ["King of Texcoco (briefly)"], ["Chron 467"], [
+    e("Son of Nezahualipilli. Briefly King of Texcoco until his death.", "Chron 467-468"),
+  ]),
+  p("Quilatzli", ["Wise Man"], ["Duran 505"], [
+    e("Wise old man from Xochimilco who showed Moctezuma ancient drawings depicting Spanish-like beings.", "Duran 505"),
+  ]),
+  p("Quintalbor / Teudilli", ["Mexican Chief"], ["Diaz p. 92","Gom 55"], [
+    e("Mexican chief who meets Cortés in Vera Cruz.", "Diaz p. 92"),
+    e("Looks like Cortés and was chosen for this reason.", "Diaz p. 91"),
+    e("Also Teudili (Gom 55). Brought the big gifts package."),
+    e("Is highest ranking official to meet Cortés on coast, governor of that province.", "Gom 55"),
+    e("Díaz describes him as more inquiring than Cuitlalpitoc. Paints him as scoffing at Spanish urgency.", "Diaz 91"),
+  ]),
+  p("Son of Cualpopoca", [], ["Gom 177","Cort 108"], [
+    e("Brought to Tenochtitlan with his father and burned.", "Gom 177, Cort 108"),
+  ]),
+  p("Tapia (Chief/Steward)", ["Steward of Moctezuma"], ["Diaz p. 228"], [
+    e("A chief and steward of Moctezuma. Kept an account of revenue in books. Díaz states he had a house full of these books.", "Diaz p. 228"),
+  ]),
+  p("Tecatzin", ["Chief of the Armory"], ["Leon 81"], [
+    e("Warned Moctezuma ahead of the festival to be ready, citing Cholula.", "Leon 81"),
+  ]),
+  p("Tecocoltzin", ["Lord of Texcoco"], ["Leon 58","Ixtlil 292"], [
+    e("Brother to Cacama and Ixtlilxochitl, son of Nezahualpilli.", "Leon 58"),
+    e("Had whiter skin.", "Leon 58"),
+    e("Survived Noche Triste.", "Ixtlil 282"),
+    e("Named Lord of Texcoco by Cortés.", "Ixtlil 292"),
+    e("Baptized as Fernando by Cortés."),
+  ]),
+  p("Tencuecuenotzin", [], ["Ixtlil 280"], [
+    e("Mexica lord killed on Noche Triste.", "Ixtlil 280"),
+  ]),
+  p("Tepeoatzin / Tepehuatzin", ["Tlacochcalcatl"], ["Leon 65","Flor 118"], [
+    e("Summoned by Moctezuma after Grijalva spotted in Vera Cruz.", "Flor 63"),
+    e("Was present when Cortés and Moctezuma met.", "Flor 118"),
+  ]),
+  p("Tepoztecatl", [], ["Flor 62"], [
+    e("Sent by Moctezuma to meet Cortés.", "Flor 62"),
+    e("Escorted treasure to Cortés.", "Flor 68"),
+  ]),
+  p("Tetlahuehuetzquititzin", ["Brother of Cacama"], ["Ixtlil 272"], [
+    e("Native of Tezcuco. Asked to survey and remove Texcoco's wealth by Cortés.", "Ixtlil 272"),
+    e("Grandson of King Nezahualpilli of Texcoco."),
+  ]),
+  p("Tetlepanquetzaltzin", ["King of Tlacopan / Tacuba"], ["Leon 65","Flor 118"], [
+    e("Was present when Moctezuma met Cortés.", "Flor 118"),
+    e("Seems to have co-conspired with Cacama to overthrow Moctezuma but was found out and arrested.", "Diaz 263"),
+    e("Was made Lord of Tacuba after Totoquihuatzin dies of smallpox.", "Ixtlil 286"),
+  ]),
+  p("Tlacaelel", ["High Adviser","Cihuacalcatl"], ["Duran"], [
+    e("Served as Cihuacalcatl to four Tlatoque. Brother to two Emperors including Moctezuma I."),
+    e("Was architect of the Triple Alliance. Said to have increased many traditional traits of Aztec militarism, sacrifice, and Huitzilopochtli worship."),
+  ]),
+  p("Tlacochcalcatl (Translator)", ["Translator","Guide"], ["Flor 91"], [
+    e("Translator brought from Spain by Cortés. Florentine Nahuatl version says he is from Cempoala.", "Flor 90-91"),
+    e("Acted as guide for the Spanish as they moved inland.", "Flor 91"),
+    e("Florentine states he was taken by one of the first ships and returned with Cortés.", "Flor 91"),
+  ]),
+  p("Tlapalizquixochtzin", ["Queen Consort"], [], [
+    e("Moctezuma's female consort and ruler of Ecatepec. Queen consort of Tenochtitlan."),
+  ]),
+  p("Tlauitol", ["King of Texcoco (briefly)"], ["Duran 467"], [
+    e("Son of Nezahualipilli. Briefly King of Texcoco following his brother Quetzalocxoy's short reign.", "Duran 467-468"),
+  ]),
+  p("Tlaltecatzin", ["Tepanec Prince","Guide"], ["Leon 87"], [
+    e("Tepanec prince who acted as guide to the Spanish.", "Leon 87"),
+    e("Wounded on Noche Triste while fleeing the city."),
+  ]),
+  p("Tocpaxochiuh / Tocpacxochitzin", ["Son of Nezahualipilli"], ["Chron 467","Ixtlil"], [
+    e("Son of Nezahualipilli, lord of Texcoco.", "Chron 467"),
+    e("Survived Noche Triste.", "Ixtlil 282"),
+    e("Killed by his brother Coanacochtzin after he brought Cortés's message to Texcoco.", "Ixtlil 291"),
+  ]),
+  p("Topantemoc / Topantemoctzin", ["Treasurer of Tlatelolco"], ["Flor 118","Leon 65"], [
+    e("Moctezuma's treasurer in Tlatelolco.", "Leon 65"),
+    e("Present when Moctezuma met Cortés.", "Flor 118"),
+  ]),
+  p("Totoquihuatztli", ["Tlatoani of Tacuba"], ["Duran 391","Ixtlil 272"], [
+    e("Was present at the coronation of Moctezuma II.", "Duran 391"),
+    e("Father-in-law to Moctezuma II.", "Ixtlil 275"),
+    e("Present in Tenochtitlan when imprisoned Moctezuma and Cacama called for a meeting."),
+    e("Died of smallpox.", "Ixtlil 286"),
+  ]),
+  p("Cuauhtemoc / Quauhtemoctzin", ["11th Tlatoani"], ["Ixtlil","Duran 538"], [
+    e("About 18 when made Lord of Tlatelolco; 18 when made Tlatoani after death of Cuitlahuac.", "Duran 538, Ixtlil 286"),
+    e("Was lord of Tlatelolco, nephew of Moctezuma. Appointed Tlatoani before the death of Moctezuma.", "Duran 538"),
+    e("Met with newly appointed lords of Tacuba and Texcoco and decided to appeal to the Spanish native allies.", "Ixtlil 286"),
+    e("Ordered a full attack on the Spanish at their homes — floors covered with stones, arrows, spears.", "Duran 539"),
+    e("Persona: Very famous captain.", "Ixtlil 286"),
+  ]),
+  p("Tzilacatzin", ["Warrior"], ["Leon 104"], [
+    e("Warrior who tried to defend cities along the lake from the second Spanish invasion.", "Leon 104"),
+  ]),
+  p("Tzinhuacpopocatzin", [], ["Leon 50"], [
+    e("Met Cortés among the volcanoes. Presented much gold. Possibly Cacamatzin?", "Leon 50"),
+  ]),
+  p("Tzoacpopocatzin", [], ["Ixtlil 280"], [
+    e("Mexica lord killed on Noche Triste.", "Ixtlil 280"),
+  ]),
+  p("Tzocoztli", [], ["Chron 460"], [
+    e("Saw the comet and reported it to Moctezuma.", "Chron 460"),
+  ]),
+  p("Uanitl", ["Family of Moctezuma"], ["Duran 506"], [
+    e("Member of Moctezuma's family installed as leader of Ecatepec.", "Duran 506"),
+  ]),
+  p("Xiuhtototzin", ["Lord of Teotihuacan"], ["Ixtlil 281"], [
+    e("Grandee of the kingdom and lord of Teotihuacan.", "Ixtlil 281"),
+    e("Died leaving on Noche Triste.", "Ixtlil 281"),
+    e("Captain General to Ixtlilxochitl and supported Cortés's troops.", "Ixtlil 281"),
+  ]),
+  p("Yacamapich", ["Son of Moctezuma"], ["Chron 506"], [
+    e("Son of Moctezuma made lord of Tenayuca.", "Chron 506"),
+  ]),
+  p("Yacotzin", ["Mother of Princes of Texcoco"], ["Leon 60"], [
+    e("Rejected her son Ixtlilxochitl's demands to be baptized at first.", "Leon 60"),
+    e("Baptized as Dona Maria. 4 daughters also converted.", "Leon 60"),
+    e("Mother to Ixtlilxochitl.", "Leon 60"),
+  ]),
+  p("Yohualli / Yohualichan", ["Teohua / Custodian"], ["Flor 62"], [
+    e("Title of Teohua, custodian of the god.", "Flor 62"),
+    e("Highest ranked of the initial Cortés meeting.", "Flor 63"),
+    e("Escorted treasure to Cortés.", "Flor 62-68"),
+  ]),
+  p("Zihuatcatzin", ["Captain General at Otumba"], ["Ixtlil 283"], [
+    e("Captain General at Otumba. Killed by Cortés.", "Ixtlil 283"),
+  ]),
+]);
+
+// ── TLAXCALANS ───────────────────────────────────────────────────────────────
+grp("tlaxcalans", "Tlaxcalans", "#2a5a3a", [
+  {name: "4 Lords of Tlaxcala", note: "Tlaxcala is a confederation of four independent cities: Tizatlan (Xicotencatl the Elder), Tepeticpac (Tlahuexolotzin), Ocotelulco (Maxixcatzin), Quiahuitzlan (Citlalpopocatzin)."},
+  {name: "4 Women", note: "Presented by the Spies to be sacrificed and eaten.", src: "Diaz p. 162"},
+  {name: "4 Men Sent to Negotiate", note: "Brought food and said they wanted peace, that Xicotencatl would be there in two days. Blamed attacks on Otomis.", src: "Diaz p. 164"},
+  {name: "5 Chief's Daughters", note: "Presented by Xicotencatl the Elder and Mase Escasi to Cortés and his men. Dona Luisa to Alvarado, Dona Elvira to Juan Velazquez de Leon, Girl 3 to Sandoval, Girl 4 to Olid, Girl 5 to Avila.", src: "Diaz"},
+  {name: "5 Tlaxcalan Slaves", note: "Presented after a second day of battles."},
+  {name: "50 Tlaxcalan Spies", note: "Gómara reports they kept bringing food but wandered about. Teuch told Cortés they were spies. They confessed armies were hiding nearby and Cortés had all 50 of their hands cut off."},
+  {name: "400 Prisoners", note: "Cortés reports taking 400 captives after attack by Tlaxcala/Otomies during raids."},
+  {name: "1,000 Tlaxcalan Warriors", note: "Chiefs offered 10,000 to escort Cortés to Cholula but he declined and took just 1,000. Same numbers offered for march from Cholula to Mexico.", src: "Diaz p. 188, 207"},
+], [
+  p("Acxoxecatl / Acxotecatl", ["Captain"], ["Leon p. 43","Ixtlil 282"], [
+    e("Tlaxcala Captain who marched to Tenochtitlan with Cortés.", "Leon p. 43"),
+    e("Survived Noche Triste.", "Ixtlil 282"),
+  ]),
+  p("Axayacatzin", ["Captain"], ["Ixtlil 263"], [
+    e("Tlaxcala captain that marched with Cortés; later returned to Tlaxcala.", "Ixtlil 263"),
+  ]),
+  p("Cahuecahua", ["Captain"], ["Leon p. 43"], [
+    e("Tlaxcala Captain who marched to Tenochtitlan with Cortés.", "Leon p. 43"),
+  ]),
+  p("Chichimecatecle / Don Lorenzo de Vargas", ["Chief"], ["Diaz p. 149"], [
+    e("Tlaxcalan chief.", "Diaz p. 149"),
+    e("Son was a captain in the Tlaxcala army who accused Xicotenga of poor fighting and abandoned him versus Spanish.", "Diaz 149"),
+  ]),
+  p("Citlalpopocatzin / Don Baltasar", ["Lord of Quiahuitzlan"], ["Ixtlil 263"], [
+    e("Came out to Hueyotlipan to greet Cortés after fleeing Tenochtitlan.", "Ixtlil 263"),
+  ]),
+  p("Cocomitecuhtli", ["Captain"], ["Leon p. 43"], [
+    e("Tlaxcala Captain who marched to Tenochtitlan with Cortés.", "Leon p. 43"),
+  ]),
+  p("Dona Elvira", [], ["Diaz 178"], [
+    e("Daughter of Maxixca, married to Juan Velazquez de Leon.", "Diaz 178"),
+    e("Apparently killed in Noche Triste with her husband.", "Diaz 307"),
+  ]),
+  p("Dona Luisa", [], ["Diaz 178"], [
+    e("Xicotenga's daughter, married to Pedro de Alvarado.", "Diaz 178"),
+  ]),
+  p("Icueten", ["Noble"], ["Ixtlil 263"], [
+    e("Noble sent on behalf of Xicotencatl to Cempoala to get gifts.", "Ixtlil 263"),
+  ]),
+  p("Indian of Tlascaltecal", ["Guide"], ["Cortés 132"], [
+    e("Guide who led the Spanish to Tlaxcala after Noche Triste.", "Cortés 132"),
+  ]),
+  p("Maxixca / Maxixcatzin / Don Juan", ["Chief of Ocotelulco","Governor"], ["Cortés 96","Diaz 173"], [
+    e("Chief of Ocotelulco. Governor of the Republic of Tlaxcala. Second in command of Tlaxcala army.", "Cortés 96"),
+    e("Cortés calls him the greatest lord of Tlaxcala.", "Cort 96"),
+    e("Urged Cortés not to enter the Mexican city.", "Diaz p. 206"),
+    e("Met Cortés when he entered Tlaxcala.", "Diaz 173"),
+    e("Resided in Ocotelulco.", "Gom p. 119"),
+    e("Came to Hueyotlipan to meet Cortés after fleeing Tenochtitlan; Cortés gave him the Mexica banner.", "Ixtlil 284"),
+    e("Was always by Cortés's side."),
+    e("Died of smallpox.", "Ixtlil 289"),
+  ]),
+  p("Matzin", ["Captain"], ["Ixtlil 263"], [
+    e("Tlaxcala captain that marched with Cortés.", "Ixtlil 263"),
+  ]),
+  p("Miztli", ["Captain"], ["Ixtlil 263"], [
+    e("Tlaxcala captain that marched with Cortés.", "Ixtlil 263"),
+  ]),
+  p("Patlahuatzin", ["Ambassador"], ["Leon p. 46"], [
+    e("Ambassador to Cholula who brought a message of peace but warning of Cortés's strength.", "Leon p. 46"),
+    e("He was mutilated and sent back to Tlaxcala."),
+  ]),
+  p("Piltecuhtli", ["Captain"], ["Leon p. 43"], [
+    e("Tlaxcala Captain who marched to Tenochtitlan with Cortés.", "Leon p. 43"),
+  ]),
+  p("Quanaltecatl", ["Captain"], ["Ixtlil 263"], [
+    e("Tlaxcala captain that marched with Cortés.", "Ixtlil 263"),
+  ]),
+  p("Quauhtotohua", ["Captain"], ["Leon p. 43"], [
+    e("Tlaxcala Captain who marched to Tenochtitlan with Cortés.", "Leon p. 43"),
+  ]),
+  p("Quetzalpopocatzin", ["Brother of Maxixca"], ["Ixtlil 282"], [
+    e("Maxixca's brother. Survived Noche Triste.", "Ixtlil 282"),
+  ]),
+  p("Tecpanecatl", ["Captain"], ["Leon p. 43"], [
+    e("Tlaxcala Captain who marched to Tenochtitlan with Cortés.", "Leon p. 43"),
+  ]),
+  p("Tenamazcuicuiltzin", ["Captain"], ["Ixtlil 263"], [
+    e("Tlaxcala captain that marched with Cortés.", "Ixtlil 263"),
+  ]),
+  p("Textlipitl", ["Captain"], ["Leon p. 43"], [
+    e("Tlaxcala Captain who marched to Tenochtitlan with Cortés.", "Leon p. 43"),
+  ]),
+  p("Tianquiztlatoatzin", ["General"], ["Ixtlil 288"], [
+    e("General that led attack on Tecoyoac with Cortés.", "Ixtlil 288"),
+  ]),
+  p("Tlacatecuhtli", ["Captain"], ["Ixtlil 263"], [
+    e("Tlaxcala captain that marched with Cortés.", "Ixtlil 263"),
+  ]),
+  p("Tlehuexolotzin / Don Gonzalo", ["Lord of Tepeticpac"], ["Ixtlil 263"], [
+    e("Lord of Tepeticpac, Tlaxcala.", "Ixtlil 263"),
+  ]),
+  p("Tlepapalotzin", ["Captain"], ["Ixtlil 263"], [
+    e("Tlaxcala captain.", "Ixtlil 263"),
+  ]),
+  p("Tocpacxochiuh", ["Lord of Tecoac"], ["Duran 518"], [
+    e("Ordered to greet the Spanish near Tecoac but instead took offense and attacked.", "Duran 518"),
+    e("Was taken captive by Cortés.", "Duran 522"),
+  ]),
+  p("Totatzin Chichatlapaltzin", ["Noble"], ["Ixtlil 263"], [
+    e("Noble sent on behalf of Maxixcatzin to Cempoala to get gifts.", "Ixtlil 263"),
+  ]),
+  p("Xicotencatl the Elder / Don Bartolome", ["Ruler of Tizatlan"], ["Gom","Diaz 153"], [
+    e("Old and blind. Felt all over Cortés's face and beard.", "Diaz 176"),
+    e("During initial time in Tlaxcala was asked about Mexico and was able to answer more than other elders."),
+    e("Moctezuma's messengers arrived to find Elder in consult with Mase Escasi.", "Diaz 153"),
+    e("Visited Cortés at his camp. Apologized and begged allegiance."),
+  ]),
+  p("Xicotencatl the Younger", ["General"], ["Gom p. 102","Diaz"], [
+    e("Tlaxcala's field general. Commands military forces.", "Gom p. 102"),
+    e("Physical description: tall, broad-shouldered, 35 years old, long pock-marked face, dignified.", "Diaz p. 168"),
+    e("From Quiahuitzlan.", "Gom p. 102"),
+    e("Army was turned back at 2nd Major Battle."),
+    e("Upon hearing his elders desire for peace, became enraged.", "Diaz p. 154"),
+    e("Came to meet with Cortés after several battles. Says he cried as he explained Tlaxcala had never been vassal to any king. Pledged allegiance.", "Gom p. 115, Diaz 167"),
+    e("Tried to seize power while leaders were fighting in Tenochtitlan (unverified)."),
+    e("Went with Tlaxcala troops to Texcoco then on to Tlacopan in support of Cortés.", "Ixtlil 308"),
+    e("Hanged by Cortés in Tlacopan for offenses.", "Ixtlil 308"),
+  ]),
+  p("Yaotzin", ["Noble"], ["Ixtlil 263"], [
+    e("Noble sent on behalf of Tlehuexolotzin to Cempoala to get gifts.", "Ixtlil 263"),
+    e("A person by this name is also ruler of Quauhnahuac and flees Cortés, but then surrenders.", "Ixtlil 302"),
+  ]),
+]);
+
+// ── TOTONACS ─────────────────────────────────────────────────────────────────
+grp("totonacs", "Totonacs (Cempoalans / Quiahuitzlan)", "#2a5a3a", [
+  {name: "2 Cempoalan Chiefs", note: "Sent from Xalacingo to Tlaxcala with a message.", src: "Diaz p. 140"},
+  {name: "4 Cempoalan Messengers", note: "Sent by Cortés to Tlaxcala.", src: "Gom p. 96"},
+  {name: "8 Cempoalan Priests", note: "Described as wearing black robes with long hair clotted with blood and smelling of decay."},
+  {name: "8 Totonac Women", note: "Given to Cortés and his men by local chiefs. Later baptized at first mass in Cempoala. Dona Francisca (daughter of Cuesco) given to Puertocarrero; Dona Catalina (niece of the Fat Cacique) became Cortés's wife.", src: "Diaz"},
+  {name: "12 Indians", note: "Sent by Cempoalans to cook for Cortés at camp the night before they got to Cempoala.", src: "Diaz 106"},
+  {name: "15 Quiahuitzlan", note: "Met Cortés in square at Quiahuitzlan."},
+  {name: "20 Cempoala Dignitaries", note: "Came to meet Cortés on the road to Cempoala."},
+  {name: "20 Scouts (5 per Díaz)", note: "Cortés meets them at Ulua — first contact with the Cempoalans.", src: "Gom 63"},
+  {name: "50 Cempoalan Warriors", note: "For trip to Mexico."},
+  {name: "200 Cempoala Porters", note: "For march to Mexico. Gómara reports 1,000, later 400 in Tlaxcala.", src: "Diaz"},
+  {name: "400 Cempoala Porters", note: "For trip from Cempoala to Quiahuitzlan.", src: "Diaz"},
+], [
+  p("Cuesco", ["Totonac Cacique"], ["Diaz 121"], [
+    e("Totonac Cacique who gave a daughter to the Spanish.", "Diaz 121"),
+  ]),
+  p("Mamexi", ["Guide"], ["Gom 93"], [
+    e("Given to Cortés in Cempoala as he departed for Mexico.", "Gom 93"),
+    e("In Ixtacamaxtitlan, urged Cortés to go through Tlaxcala, not Moctezuma's territories — said it was a deceit to separate the Spanish from their current allies.", "Gom p. 98"),
+  ]),
+  p("Tamalli", [], ["Gom 93"], [
+    e("Given to Cortés in Cempoala as he departed for Mexico.", "Gom 93"),
+  ]),
+  p("Teuch / Teuche", ["Captain"], ["Gom 93","De Tapia"], [
+    e("Given to Cortés in Cempoala as he departed for Mexico.", "Gom 93"),
+    e("Warns Cortés that Tlaxcala spies in camp must go, which Cortés heeds.", "Gom 106"),
+    e("Is a captain of a Totonac unit.", "De Tapia"),
+    e("Warns Cortés there are 100,000 men who will fight him in Mexico, but says he will die by his side if he goes.", "De Tapia"),
+  ]),
+  p("Tlacochcalcatl (Cempoalan Translator)", ["Translator"], ["Flor 91"], [
+    e("From Cempoala. Was first to greet the Spanish in our land.", "Flor"),
+    e("Was taken by Córdoba and came back with Cortés as translator.", "Flor 91"),
+    e("Díaz mentions two men, James and Melchior. Florentine seems to place him as Malintzin's partner, which was actually Alvarez — stories may have been co-mingled."),
+  ]),
+  p("Xicomecoatl / Fat Cacique / Chicomacatl", ["Cacique of Cempoala"], ["Diaz 108","Ixtlil 263"], [
+    e("Cacique of Cempoala — so fat, according to Díaz.", "Diaz 108"),
+  ]),
+]);
+
+// ── OTHERS ───────────────────────────────────────────────────────────────────
+grp("others", "Others", "#2a5a3a", [
+  {name: "2 Slave Girls", note: "Given to Cortés in Xalacingo with gold necklaces and cloth.", src: "Diaz p. 140"},
+  {name: "3 Indian Chieftains", note: "Captured in major battle against Tlaxcala. Sent to Tlaxcala to beg for passing.", src: "Diaz p. 150"},
+  {name: "4 Slave Girls", note: "Given to Cortés in Ixtacamaxtitlan by the chief. Díaz says in Zautla, Cortés says 7 or 8 girls.", src: "Gom p. 96, Diaz p. 138"},
+  {name: "8 Women of Chalco", note: "Leaders from the towns of Chalco had given Cortés gold and 8 women.", src: "Diaz"},
+  {name: "15 Quiahuitzlan Dignitaries", note: "Met Cortés in main square to greet him. 12 according to Gómara."},
+  {name: "18 Xico Dignitaries", note: "Came to meet Cortés into Xico, not wanting the Cempoalans to enter. The Mexica army had left days before, they claimed."},
+  {name: "20 Xocotlan Warriors", note: "Cortés asked Olintecle for 20 warriors and was granted them.", src: "Diaz p. 138"},
+  {name: "20 Xalacingo Warriors", note: "Cortés asked for and received 20 warriors.", src: "Diaz p. 141"},
+  {name: "300 Ixtacamaxtitlan Soldiers", note: "Provided to Cortés. Díaz reports Olintecle gave 20 warriors; Cortés reports 300.", src: "Gom p. 98"},
+  {name: "Chinantecs", note: "A group of people from Oaxaca found during mining mission.", src: "Diaz 268"},
+], [
+  p("Aquincuz (Other)", ["Chief"], ["Gom 32"], [
+    e("Chief of Xamanzana.", "Gom 32"),
+  ]),
+  p("Cinacatzin", ["Warrior"], ["Ixtlil 282"], [
+    e("Teotihuacan warrior who fought with Mexica; took down a horse.", "Ixtlil 282"),
+  ]),
+  p("Coatelicamat", ["Ruler"], ["Cort p. 109"], [
+    e("Ruler of mining province where Cortés sent 2 Spaniards to learn about their gold.", "Cort p. 109"),
+    e("He did not allow Mexicans in but welcomed the Spanish and was eager to ally with Cortés."),
+  ]),
+  p("Drunk Man from Chalco", [], ["Duran"], [
+    e("Mexica soothsayers come across this man who speaks a vulgar truth to them — that Moctezuma has already lost the empire, that his decisions are done. They cannot appease him; his truth is too strong."),
+    e("He disappears and they decide it is the god Tezcatlipoca.", "Duran"),
+  ]),
+  p("Lord of Ixtacamaxtitlan", ["Lord"], ["Gom p. 97","Cort 91"], [
+    e("Met Cortés in Caltanmi.", "Cort 91"),
+    e("Gave two slave girls to Cortés. Escorted Cortés to the wall/border of Tlaxcala.", "Gom p. 97"),
+  ]),
+  p("Malintzin / Marina / La Malinche", ["Translator"], ["Diaz 82","Ixtlil 245"], [
+    e("Physical description: Díaz says she was attractive, her royal lineage evident in her appearance and good looking, intelligent.", "Diaz 82"),
+    e("Mom and Dad were lords of Paynala, Olutla, or Huilotlan. Her mother ruled with her son. Baptized as Marina, her son as Lazaro, her mother as Marta.", "Ixtlil 245, Diaz 85"),
+    e("Granddaughter of the lord of Huilotlan, Xalatzinco.", "Ixtlil 245"),
+    e("From Olutla to wealthy parents, but stolen and sold in Xicalango market as a slave.", "Gom 55"),
+    e("Given to Cortés after the victory at Cintla by Maya chiefs.", "Diaz 82, Gom 48"),
+    e("Baptized by Fray Bartolome Olmedo at Santa Maria de la Victoria, March 1519.", "Diaz 82"),
+    e("Cortés gave her to Alonso Puertocarrero.", "Diaz 82"),
+    e("Tipped off in Cholula by a local woman that the Mexica army is near; urges her to flee like other women.", "Cort 99"),
+    e("Sent to ask Moctezuma for a tour of Tlatelolco on day 4 in Mexico.", "Diaz 131"),
+    e("Went to seize Moctezuma in his quarters.", "Diaz 245"),
+    e("Urges the Mexica to come out and feed the Spanish after they have seized Moctezuma.", "Leon 68"),
+    e("Married Juan Jaramillo after the conquest.", "Diaz 86"),
+  ]),
+  p("Marta", [], ["Diaz 85"], [
+    e("Malintzin's mother. Her Christian name given at baptism.", "Diaz 85"),
+  ]),
+  p("Nachancan", ["Chief of Chetemal"], [], [
+    e("Chief of Chetemal."),
+  ]),
+  p("Olientetl / Olintecle", ["Chief of Zautla"], ["Gom p. 95","Diaz"], [
+    e("Came out to meet Cortés as he entered Xocotlan.", "Diaz 135"),
+    e("20,000 vassals, 30 wives, 100 female attendants, 2,000 retainers.", "Gom p. 96"),
+  ]),
+  p("Qualpopoca / Coatlpopoca (Nautla)", ["Chief of Nautla"], ["Cort p. 107","Duran 518"], [
+    e("Chief of Nautla. Killed two Spanish and was attacked by Vera Cruz soldiers.", "Cort p. 107"),
+    e("Brought to Cortés in Tenochtitlan with 15 others. Initially said Moctezuma did not order the murder but upon being burned publicly shouted that he did. Cortés used this to publicly arrest Moctezuma.", "Cort p. 108"),
+    e("Durán says he led them on a fake route then attacked, killing two horses.", "Duran 518"),
+  ]),
+  p("Tangajuan", ["King of Michoacan"], ["Ixtlil 294"], [
+    e("Sided with Mexica in final battle of Tenochtitlan.", "Ixtlil 294"),
+    e("His sister starved herself upon belief that the Spaniards would cruelly run their land. She returned from the dead with a warning for her brother.", "Ixtlil 294"),
+  ]),
+  p("Taxmar (Other)", ["Chief"], [], [
+    e("Chief of Xamanzana, successor to Aquincuz."),
+  ]),
+  p("Tlacateuctli Otoncoatl", ["Lord of Teocalhueyacan"], ["Flor 158"], [
+    e("Lord of Teocalhueyacan who gave harbor to Cortés.", "Flor 158"),
+  ]),
+  p("Tuchintecla / Tochel", ["Chief of Coatzalcoalco"], ["Cort p. 110","Diaz 267"], [
+    e("Chief of Coatzalcoalco.", "Cort p. 110, Diaz 267"),
+  ]),
+]);
+
+// ── Render ───────────────────────────────────────────────────────────────────
+
+function makeBadges(person, groupLabel) {
+  var html = "";
+  if (groupLabel) html += '<span class="badge bg">' + groupLabel + '</span>';
+  for (var i = 0; i < person.roles.length; i++) {
+    html += '<span class="badge br">' + person.roles[i] + '</span>';
+  }
+  for (var j = 0; j < person.sources.length; j++) {
+    if (person.sources[j]) html += '<span class="badge bs">' + person.sources[j] + '</span>';
+  }
+  return html;
+}
+
+function makePersonHTML(person, groupLabel) {
+  var evHTML = "";
+  for (var i = 0; i < person.events.length; i++) {
+    var ev = person.events[i];
+    evHTML += '<div class="event">' + ev.text;
+    if (ev.src) evHTML += '<span class="src">(' + ev.src + ')</span>';
+    evHTML += '</div>';
+  }
+  var body = evHTML ? '<div class="events">' + evHTML + '</div>' : '';
+  return '<details><summary><span class="arr">&#9654;</span>' +
+    '<span class="sname">' + person.name + '</span>' +
+    '<span class="badges">' + makeBadges(person, groupLabel) + '</span>' +
+    '</summary>' + body + '</details>';
+}
+
+function makeUnnamedHTML(entry) {
+  return '<div class="unnamed-box"><div class="unnamed-box-title">' + entry.name +
+    (entry.src ? ' <span class="badge bs">' + entry.src + '</span>' : '') +
+    '</div><div class="unnamed-box-note">' + (entry.note || '') + '</div></div>';
+}
+
+function personMatches(person, q) {
+  if (!q) return true;
+  var hay = person.name.toLowerCase();
+  for (var i = 0; i < person.roles.length; i++) hay += " " + person.roles[i].toLowerCase();
+  for (var j = 0; j < person.sources.length; j++) hay += " " + person.sources[j].toLowerCase();
+  for (var k = 0; k < person.events.length; k++) {
+    hay += " " + person.events[k].text.toLowerCase();
+    if (person.events[k].src) hay += " " + person.events[k].src.toLowerCase();
+  }
+  return hay.indexOf(q) !== -1;
+}
+
+function unnamedMatches(entry, q) {
+  if (!q) return true;
+  var hay = entry.name.toLowerCase() + " " + (entry.note || "").toLowerCase() + " " + (entry.src || "").toLowerCase();
+  return hay.indexOf(q) !== -1;
+}
+
+function render() {
+  var q = document.getElementById("search").value.toLowerCase().trim();
+  var totalPeople = 0;
+  var matchedPeople = 0;
+  for (var g = 0; g < GROUPS.length; g++) {
+    totalPeople += GROUPS[g].people.length;
+  }
+
+  // Build group nav
+  var navHTML = "";
+  for (var g = 0; g < GROUPS.length; g++) {
+    navHTML += '<button onclick="jumpGroup(\'' + GROUPS[g].id + '\')">' + GROUPS[g].label + '</button>';
+  }
+  document.getElementById("group-nav").innerHTML = navHTML;
+
+  // Find all matched letters across all groups when searching
+  var allLetters = {};
+  for (var g = 0; g < GROUPS.length; g++) {
+    for (var i = 0; i < GROUPS[g].people.length; i++) {
+      if (personMatches(GROUPS[g].people[i], q)) {
+        var letter = GROUPS[g].people[i].name[0].toUpperCase();
+        allLetters[letter] = true;
+        matchedPeople++;
+      }
+    }
+  }
+
+  // Alpha nav (only when searching)
+  if (q) {
+    var letters = Object.keys(allLetters).sort();
+    var alphaHTML = "";
+    for (var i = 0; i < letters.length; i++) {
+      alphaHTML += '<button onclick="jumpLetter(\'' + letters[i] + '\')">' + letters[i] + '</button>';
+    }
+    document.getElementById("alpha").innerHTML = alphaHTML;
+  } else {
+    document.getElementById("alpha").innerHTML = "";
+  }
+
+  document.getElementById("count").textContent = q ? (matchedPeople + " of " + totalPeople) : (totalPeople + " people");
+
+  // Render groups
+  var html = "";
+  for (var g = 0; g < GROUPS.length; g++) {
+    var grpData = GROUPS[g];
+
+    // Filter unnamed
+    var unnamedFiltered = [];
+    for (var u = 0; u < grpData.unnamed.length; u++) {
+      if (unnamedMatches(grpData.unnamed[u], q)) unnamedFiltered.push(grpData.unnamed[u]);
+    }
+
+    // Filter and group people by letter
+    var letterGroups = {};
+    for (var i = 0; i < grpData.people.length; i++) {
+      if (personMatches(grpData.people[i], q)) {
+        var letter = grpData.people[i].name[0].toUpperCase();
+        if (!letterGroups[letter]) letterGroups[letter] = [];
+        letterGroups[letter].push(grpData.people[i]);
+      }
+    }
+    var letters = Object.keys(letterGroups).sort();
+
+    if (!unnamedFiltered.length && !letters.length) continue;
+
+    html += '<div class="group-section" id="group-' + grpData.id + '">';
+    html += '<div class="group-heading">' + grpData.label + '</div>';
+
+    // Unnamed entries
+    for (var u = 0; u < unnamedFiltered.length; u++) {
+      html += makeUnnamedHTML(unnamedFiltered[u]);
+    }
+
+    // Named people by letter
+    for (var li = 0; li < letters.length; li++) {
+      var letter = letters[li];
+      html += '<div class="letter-head" id="letter-' + letter + '-' + grpData.id + '">' + letter + '</div>';
+      var grpPeople = letterGroups[letter];
+      for (var pi = 0; pi < grpPeople.length; pi++) {
+        var showGroup = q ? grpData.label : null;
+        html += makePersonHTML(grpPeople[pi], showGroup);
+      }
+    }
+
+    html += '</div>';
+  }
+
+  if (!html) {
+    html = '<p class="no-results">No matches found.</p>';
+  }
+
+  document.getElementById("output").innerHTML = html;
+}
+
+function jumpGroup(id) {
+  var el = document.getElementById("group-" + id);
+  if (el) el.scrollIntoView({behavior: "smooth", block: "start"});
+}
+
+function jumpLetter(letter) {
+  // find first matching letter heading
+  var els = document.querySelectorAll('[id^="letter-' + letter + '"]');
+  if (els.length) els[0].scrollIntoView({behavior: "smooth", block: "start"});
+}
+
+document.getElementById("search").addEventListener("input", render);
+render();
+</script>
+</body>
+</html>
